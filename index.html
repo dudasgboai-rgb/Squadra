@@ -4,6 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>Bútortervező Kalkulátor</title>
   <style>
     *,
@@ -150,6 +153,8 @@
     }
 
     const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');`;
+
+    const VERSION = "1.1";
 
     const R = (n, dec = 1) => { const f = Math.pow(10, dec); return Math.round(n * f) / f; };
     const E = (o, t) => ({ o, t }); // Élzárás shorthand
@@ -5758,6 +5763,7 @@
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 {user?.photoURL && <img src={user.photoURL} style={{ width: 28, height: 28, borderRadius: "50%", border: "2px solid rgba(255,255,255,.3)" }} referrerPolicy="no-referrer" />}
                 <span style={{ fontSize: 12, color: "rgba(255,255,255,.6)", maxWidth: 140, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: window.innerWidth < 500 ? "none" : "block" }}>{user?.displayName || user?.email}</span>
+                <span style={{ fontSize: 10, color: "rgba(255,255,255,.35)", fontFamily: "JetBrains Mono, monospace", letterSpacing: ".03em" }}>v{VERSION}</span>
                 <button onClick={handleSignOut} style={{ background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.15)", borderRadius: 8, padding: "5px 10px", color: "rgba(255,255,255,.8)", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "Inter, sans-serif" }}
                   onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,.18)"} onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,.08)"}>Kilépés</button>
               </div>
