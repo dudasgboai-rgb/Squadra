@@ -3879,7 +3879,7 @@
       if (bottomPos === "under") sideH -= bt;
       if (variant === "simple" && topPos === "over") sideH -= bt;
 
-      const sideDepth = depthIncludesFront ? localDepth - bt : localDepth;
+      const sideDepth = localDepth;
 
       const internalW = W - 2 * bt;
       let internalH = sideH;
@@ -3945,10 +3945,20 @@
       }, [sideDepth]);
 
       const getPresets = (count) => {
-        if (count === 2) return [{ id: "equal", label: "Egyenletes (50% - 50%)" }, { id: "preset_2_1", label: "1 keskeny, 1 mély (30% - 70%)" }];
-        if (count === 3) return [{ id: "equal", label: "Egyenletes (33% mind)" }, { id: "preset_3_1", label: "1 keskeny, 2 mély (20%-40%-40%)" }, { id: "preset_3_2", label: "1 keskeny, 1 közepes, 1 mély (20%-30%-50%)" }];
-        if (count === 4) return [{ id: "equal", label: "Egyenletes (25% mind)" }, { id: "preset_4_1", label: "1 keskeny, 3 közepes (15%-28%-28%-29%)" }];
-        return [{ id: "equal", label: "Egyenletes" }];
+        if (count === 2) return [
+          { id: "equal", label: "Egyenletes", sublabel: "50/50", ratios: [0.5, 0.5] },
+          { id: "preset_2_1", label: "Kis + Nagy", sublabel: "30/70", ratios: [0.3, 0.7] },
+        ];
+        if (count === 3) return [
+          { id: "equal", label: "Egyenletes", sublabel: "33/33/33", ratios: [1/3, 1/3, 1/3] },
+          { id: "preset_3_1", label: "K + N + N", sublabel: "20/40/40", ratios: [0.2, 0.4, 0.4] },
+          { id: "preset_3_2", label: "K + K + N", sublabel: "20/30/50", ratios: [0.2, 0.3, 0.5] },
+        ];
+        if (count === 4) return [
+          { id: "equal", label: "Egyenletes", sublabel: "25/25/25/25", ratios: [0.25, 0.25, 0.25, 0.25] },
+          { id: "preset_4_1", label: "K + 3×K", sublabel: "15/28/28/29", ratios: [0.15, 0.28, 0.28, 0.29] },
+        ];
+        return [{ id: "equal", label: "Egyenletes", sublabel: "", ratios: [1] }];
       };
 
       if (!getPresets(drawerCount).find(p => p.id === drawerDist) && drawerDist !== "custom") {
@@ -4137,7 +4147,7 @@
         ...frontsH.map((h, i) => {
           let exactStr = exactFrontsH && exactFrontsH[i] ? `(Pontos: ${exactFrontsH[i].toFixed(1)} mm)` : "";
           return {
-            id: "front_" + i, name: "Fiókelőlap " + (i + 1) + ".", qty: 1, l: h, w: drawerW, t: bt, note: `Fogantyú: Vízszintes ${exactStr}`, colorIdx: doorDef.colorIdx, edges: [...doorDef.edges]
+            id: "front_" + i, name: "Fiókelőlap " + (i + 1) + ".", qty: 1, l: h, w: drawerW, t: bt, note: `Fogantyú: Vízszintes ${exactStr}`, colorIdx: doorDef.colorIdx, edges: [...doorDef.edges], isFront: true
           };
         }),
         ...drawerMaterials
@@ -4253,28 +4263,12 @@
                     </div>
                   </label>
                   <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <span>Szekrény mélysége</span>
-                    </div>
+                    <span>Szekrény mélysége <span style={{ fontWeight: 400, color: "#999" }}>(előlap nélkül)</span></span>
                     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                       <input type="number" value={localDepth} min={100} onChange={e => setLocalDepth(e.target.value === "" ? "" : +e.target.value)} style={{ ...inputStyle, fontSize: 14 }} />
                       <span style={{ fontSize: 11, color: "#888", fontWeight: 600 }}>mm</span>
                     </div>
                   </label>
-                  <div style={{ marginTop: 14 }}>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 8, textTransform: "uppercase", letterSpacing: ".05em" }}>Mélység típusa</div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                      {[
-                        { id: false, label: "Fiókelőlap nélkül", icon: "┣━", desc: "A megadott mélység csak a korpuszra vonatkozik" },
-                        { id: true, label: "Fiókelőlappal", icon: "┣━┫", desc: "A megadott mélység a teljes külső méret (korpusz + előlap)" },
-                      ].map(opt => (
-                        <button key={String(opt.id)} onClick={() => setDepthIncludesFront(opt.id)} style={{ padding: "8px 12px", borderRadius: 8, fontSize: 12, cursor: "pointer", background: depthIncludesFront === opt.id ? "#5a2a0a" : "#f4efe8", color: depthIncludesFront === opt.id ? "#fff" : "#5a4a3a", border: depthIncludesFront === opt.id ? "2px solid #5a2a0a" : "2px solid #d8d0c0", fontWeight: 700, fontFamily: "Inter, sans-serif", textAlign: "left", transition: "all .15s" }}>
-                          <span style={{ fontFamily: "JetBrains Mono, monospace", marginRight: 8, fontSize: 14 }}>{opt.icon}</span>{opt.label}
-                          <div style={{ fontSize: 10, fontWeight: 400, opacity: .7, marginTop: 2 }}>{opt.desc}</div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
                   {[
                     ...(variant === "kitchen" ? [{ label: "Átkötő mélysége", val: braceDepth, set: setBraceDepth, min: 50, unit: "mm" }] : []),
                     { label: "Hátlap vastagság", val: backT, set: setBackT, min: 1, unit: "mm" },
@@ -4386,40 +4380,60 @@
                       </tr>
                     </thead>
                     <tbody>
-                      {parts.map((p, i) => {
-                        const dims = getDisplayDims(p);
-                        const isSwapped = !!swappedParts[p.id];
-                        return (
-                          <tr key={i} style={{ background: i % 2 ? "#f8f6f2" : "#fff", height: 32 }}>
-                            <td style={{ padding: "6px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap" }}>{p.name}</td>
-                            <td style={{ padding: "6px", textAlign: "center", whiteSpace: "nowrap" }}>{monoSpan(p.qty)}</td>
-                            <td style={{ padding: "6px", whiteSpace: "nowrap" }}>
-                              <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
-                                {monoSpan(dims.l)}<span style={{ fontSize: 10, color: "#aaa" }}>×</span>{monoSpan(dims.w)}
-                                <button onClick={() => toggleSwap(p.id)} title="Szálirány megfordítása" style={{ marginLeft: 2, padding: "1px 5px", borderRadius: 4, cursor: "pointer", fontSize: 10, fontWeight: 700, lineHeight: 1, background: isSwapped ? "#e8f0ff" : "#f0f0f0", border: isSwapped ? "1.5px solid #3a7acc" : "1px solid #ccc", color: isSwapped ? "#3a7acc" : "#888" }}>⇄</button>
-                              </div>
-                            </td>
-                            <td style={{ padding: "6px", whiteSpace: "nowrap" }}>{monoSpan(p.t)}</td>
-                            <td style={{ padding: "6px", whiteSpace: "nowrap" }}>
-                              <div onClick={() => { const next = ((p.colorIdx || 0) + 1) % boardColors.length; setPartOverride(p.id, "colorIdx", next); }} style={{ display: "flex", alignItems: "center", gap: 4, cursor: "pointer", userSelect: "none" }} title="Kattints a szín váltáshoz">
-                                <div style={{ width: 14, height: 14, borderRadius: 3, background: boardColors[p.colorIdx]?.hex || "#ccc", border: "1.5px solid #888", flexShrink: 0, transition: "all .15s" }} />
-                                <span style={{ fontSize: 10, color: "#666" }}>{boardColors[p.colorIdx]?.name || "?"}</span>
-                              </div>
-                            </td>
-                            <td style={{ padding: "6px" }}>
-                              <div style={{ display: "flex", gap: 2 }}>
-                                {["H1", "H2", "Sz1", "Sz2"].map((lbl, ei) => {
-                                  const ev = p.edges[ei];
-                                  return (
-                                    <div key={lbl} onClick={() => { const newEdges = [...p.edges]; newEdges[ei] = cycleEdgeColor(ev); setPartOverride(p.id, "edges", newEdges); }} onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); const newEdges = [...p.edges]; newEdges[ei] = toggleEdgeThick(ev); setPartOverride(p.id, "edges", newEdges); }} title={lbl + ": bal klikk=szín, jobb klikk=vastagság"} style={{ width: 28, height: 20, borderRadius: 3, cursor: "pointer", userSelect: "none", background: edgeBg(ev), border: ev ? "1.5px solid #888" : "1px solid #d0ccc0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 7, fontWeight: 700, color: ev ? "#333" : "#bbb", transition: "all .1s" }}>{ev ? thickLabels[ev.t] : "—"}</div>
-                                  );
-                                })}
-                              </div>
-                            </td>
-                            <td style={{ padding: "6px", fontSize: 10, color: "#888", whiteSpace: "nowrap" }}>{p.note}</td>
-                          </tr>
-                        );
-                      })}
+                      {(() => {
+                        const corpusParts = parts.filter(p => !p.isFront && !p.isDrawer);
+                        const frontParts = parts.filter(p => p.isFront);
+                        const drawerParts = parts.filter(p => p.isDrawer);
+                        const sections = [
+                          { key: "corpus", label: "Korpusz anyag", color: "#5a3a1a", bg: "#f4ede0", parts: corpusParts },
+                          { key: "front", label: "Előlap", color: "#1a3a5a", bg: "#e0eaf4", parts: frontParts },
+                          { key: "drawer", label: "Fiókanyag", color: "#1a4a2a", bg: "#e0f4e8", parts: drawerParts },
+                        ];
+                        let globalIdx = 0;
+                        return sections.map(sec => [
+                          sec.parts.length > 0 && (
+                            <tr key={sec.key + "_header"}>
+                              <td colSpan={7} style={{ padding: "6px 8px 4px", fontSize: 10, fontWeight: 800, color: sec.color, background: sec.bg, textTransform: "uppercase", letterSpacing: ".08em", borderTop: "2px solid " + sec.color + "44", borderBottom: "1px solid " + sec.color + "33" }}>{sec.label}</td>
+                            </tr>
+                          ),
+                          ...sec.parts.map((p, si) => {
+                            const rowBg = si % 2 ? "#f8f6f2" : "#fff";
+                            const dims = getDisplayDims(p);
+                            const isSwapped = !!swappedParts[p.id];
+                            globalIdx++;
+                            return (
+                              <tr key={p.id} style={{ background: rowBg, height: 32 }}>
+                                <td style={{ padding: "6px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap" }}>{p.name}</td>
+                                <td style={{ padding: "6px", textAlign: "center", whiteSpace: "nowrap" }}>{monoSpan(p.qty)}</td>
+                                <td style={{ padding: "6px", whiteSpace: "nowrap" }}>
+                                  <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                                    {monoSpan(dims.l)}<span style={{ fontSize: 10, color: "#aaa" }}>×</span>{monoSpan(dims.w)}
+                                    <button onClick={() => toggleSwap(p.id)} title="Szálirány megfordítása" style={{ marginLeft: 2, padding: "1px 5px", borderRadius: 4, cursor: "pointer", fontSize: 10, fontWeight: 700, lineHeight: 1, background: isSwapped ? "#e8f0ff" : "#f0f0f0", border: isSwapped ? "1.5px solid #3a7acc" : "1px solid #ccc", color: isSwapped ? "#3a7acc" : "#888" }}>⇄</button>
+                                  </div>
+                                </td>
+                                <td style={{ padding: "6px", whiteSpace: "nowrap" }}>{monoSpan(p.t)}</td>
+                                <td style={{ padding: "6px", whiteSpace: "nowrap" }}>
+                                  <div onClick={() => { const next = ((p.colorIdx || 0) + 1) % boardColors.length; setPartOverride(p.id, "colorIdx", next); }} style={{ display: "flex", alignItems: "center", gap: 4, cursor: "pointer", userSelect: "none" }} title="Kattints a szín váltáshoz">
+                                    <div style={{ width: 14, height: 14, borderRadius: 3, background: boardColors[p.colorIdx]?.hex || "#ccc", border: "1.5px solid #888", flexShrink: 0, transition: "all .15s" }} />
+                                    <span style={{ fontSize: 10, color: "#666" }}>{boardColors[p.colorIdx]?.name || "?"}</span>
+                                  </div>
+                                </td>
+                                <td style={{ padding: "6px" }}>
+                                  <div style={{ display: "flex", gap: 2 }}>
+                                    {["H1", "H2", "Sz1", "Sz2"].map((lbl, ei) => {
+                                      const ev = p.edges[ei];
+                                      return (
+                                        <div key={lbl} onClick={() => { const newEdges = [...p.edges]; newEdges[ei] = cycleEdgeColor(ev); setPartOverride(p.id, "edges", newEdges); }} onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); const newEdges = [...p.edges]; newEdges[ei] = toggleEdgeThick(ev); setPartOverride(p.id, "edges", newEdges); }} title={lbl + ": bal klikk=szín, jobb klikk=vastagság"} style={{ width: 28, height: 20, borderRadius: 3, cursor: "pointer", userSelect: "none", background: edgeBg(ev), border: ev ? "1.5px solid #888" : "1px solid #d0ccc0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 7, fontWeight: 700, color: ev ? "#333" : "#bbb", transition: "all .1s" }}>{ev ? thickLabels[ev.t] : "—"}</div>
+                                      );
+                                    })}
+                                  </div>
+                                </td>
+                                <td style={{ padding: "6px", fontSize: 10, color: "#888", whiteSpace: "nowrap" }}>{p.note}</td>
+                              </tr>
+                            );
+                          })
+                        ]);
+                      })()}
                     </tbody>
                   </table>
                 </div>
@@ -4429,7 +4443,7 @@
               <div style={{ ...cardStyle, marginTop: 16 }}>
                 <div style={{ fontWeight: 800, fontSize: 13, color: BRN, marginBottom: 12 }}>{"\uD83D\uDDC4\uFE0F"} Fiók előlap és Fogantyú beállítások</div>
 
-                <div style={{ display: "flex", gap: 16, marginBottom: 16 }}>
+                <div style={{ display: "flex", gap: 16, marginBottom: 16, flexWrap: "wrap" }}>
                   <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
                     Fiókok száma
                     <div style={{ display: "flex", gap: 4 }}>
@@ -4439,12 +4453,44 @@
                     </div>
                   </label>
 
-                  <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, flex: 1 }}>
+                  <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, flex: 1, minWidth: 180 }}>
                     Fiókelőlapok elosztása
-                    <select value={drawerDist} onChange={(e) => setDrawerDist(e.target.value)} style={{ ...inputStyle, fontSize: 13, padding: "7px" }}>
-                      {getPresets(drawerCount).map(p => <option key={p.id} value={p.id}>{p.label}</option>)}
-                      <option value="custom">Egyedi méretezés...</option>
-                    </select>
+                    <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
+                      {getPresets(drawerCount).map(p => {
+                        const active = drawerDist === p.id;
+                        const W2 = 32, H2 = 46, pad2 = 2.5, gap2 = 2;
+                        const innerH2 = H2 - 2 * pad2;
+                        const innerW2 = W2 - 2 * pad2;
+                        const totalGap2 = gap2 * (p.ratios.length - 1);
+                        const availH2 = innerH2 - totalGap2;
+                        let yCur = pad2;
+                        const rects = p.ratios.map((r, ri) => {
+                          const rh = availH2 * r;
+                          const el = React.createElement("rect", { key: ri, x: pad2 + 1.5, y: yCur + 1, width: innerW2 - 3, height: Math.max(rh - 2, 1.5), rx: 1.5, fill: "currentColor", opacity: active ? 0.85 : 0.45 });
+                          yCur += rh + gap2;
+                          return el;
+                        });
+                        return (
+                          <button key={p.id} onClick={() => setDrawerDist(p.id)} title={p.sublabel} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "6px 6px 4px", borderRadius: 8, cursor: "pointer", background: active ? BLUE : "#f0f4ff", color: active ? "#fff" : BLUE, border: active ? `2px solid ${BLUE}` : "2px solid #d0dcf0", transition: "all .15s", minWidth: 44 }}>
+                            <svg width={W2} height={H2} viewBox={`0 0 ${W2} ${H2}`} fill="currentColor">
+                              <rect x={pad2} y={pad2} width={innerW2} height={innerH2} rx={2} fill="none" stroke="currentColor" strokeWidth={1.5} />
+                              {rects}
+                            </svg>
+                            <span style={{ fontSize: 8, fontWeight: 700, textAlign: "center", lineHeight: 1.2, letterSpacing: ".02em" }}>{p.label}</span>
+                          </button>
+                        );
+                      })}
+                      <button key="custom" onClick={() => setDrawerDist("custom")} title="Egyedi méretezés" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "6px 6px 4px", borderRadius: 8, cursor: "pointer", background: drawerDist === "custom" ? BLUE : "#f0f4ff", color: drawerDist === "custom" ? "#fff" : BLUE, border: drawerDist === "custom" ? `2px solid ${BLUE}` : "2px solid #d0dcf0", transition: "all .15s", minWidth: 44 }}>
+                        <svg width={32} height={46} viewBox="0 0 32 46" fill="currentColor">
+                          <rect x={2.5} y={2.5} width={27} height={41} rx={2} fill="none" stroke="currentColor" strokeWidth={1.5} />
+                          <rect x={4.5} y={5} width={23} height={8} rx={1.5} opacity={drawerDist === "custom" ? 0.85 : 0.45} />
+                          <rect x={4.5} y={15} width={23} height={13} rx={1.5} opacity={drawerDist === "custom" ? 0.85 : 0.45} />
+                          <rect x={4.5} y={30} width={23} height={11} rx={1.5} opacity={drawerDist === "custom" ? 0.85 : 0.45} />
+                          <text x={16} y={26} textAnchor="middle" fontSize={8} fontWeight={900} fontFamily="Inter,sans-serif" fill={drawerDist === "custom" ? "#fff" : BLUE} opacity={1}>✎</text>
+                        </svg>
+                        <span style={{ fontSize: 8, fontWeight: 700, textAlign: "center", lineHeight: 1.2, letterSpacing: ".02em" }}>Egyedi</span>
+                      </button>
+                    </div>
                   </label>
                 </div>
 
