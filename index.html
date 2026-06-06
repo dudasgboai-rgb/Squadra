@@ -154,7 +154,7 @@
 
     const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');`;
 
-    const VERSION = "1.2";
+    const VERSION = "1.3";
 
     const R = (n, dec = 1) => { const f = Math.pow(10, dec); return Math.round(n * f) / f; };
     const E = (o, t) => ({ o, t }); // Élzárás shorthand
@@ -3865,9 +3865,9 @@
       const [customHeights, setCustomHeights] = usePersistentState("DrawerCalc", "customHeights", {});
 
       const [handlePitch, setHandlePitch] = usePersistentState("DrawerCalc", "handlePitch", params.handlePitch);
-      const [handleCenter, setHandleCenter] = usePersistentState("DrawerCalc", "handleCenter", true);
       const [handleMarginX, setHandleMarginX] = usePersistentState("DrawerCalc", "handleMarginX", params.handleMarginX);
       const [handleMarginY, setHandleMarginY] = usePersistentState("DrawerCalc", "handleMarginY", params.handleMarginY);
+      const [handleCenterY, setHandleCenterY] = usePersistentState("DrawerCalc", "handleCenterY", false);
 
       const bt = params.boardThickness;
       const autoTotalCabinetH = variant === "kitchen" ? params.counterHeight - params.countertopThickness : params.cabinetHeight;
@@ -4521,29 +4521,17 @@
                   </label>
 
                   <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>
-                    Fogantyú X pozíció
-                    <div style={{ display: "flex", gap: 4 }}>
-                      <button onClick={() => setHandleCenter(true)} style={{ flex: 1, padding: "4px", fontSize: 11, fontWeight: 700, borderRadius: 4, border: handleCenter ? "1.5px solid #3a7acc" : "1px solid #ccc", background: handleCenter ? "#eef4ff" : "#f0f0f0", color: handleCenter ? "#3a7acc" : "#666", cursor: "pointer" }}>Középen</button>
-                      <button onClick={() => setHandleCenter(false)} style={{ flex: 1, padding: "4px", fontSize: 11, fontWeight: 700, borderRadius: 4, border: !handleCenter ? "1.5px solid #3a7acc" : "1px solid #ccc", background: !handleCenter ? "#eef4ff" : "#f0f0f0", color: !handleCenter ? "#3a7acc" : "#666", cursor: "pointer" }}>Egyedi</button>
+                    Kezdő furat táv. fentről
+                    <div style={{ display: "flex", gap: 4, marginBottom: 4 }}>
+                      <button onClick={() => setHandleCenterY(false)} style={{ flex: 1, padding: "4px", fontSize: 11, fontWeight: 700, borderRadius: 4, border: !handleCenterY ? "1.5px solid #3a7acc" : "1px solid #ccc", background: !handleCenterY ? "#eef4ff" : "#f0f0f0", color: !handleCenterY ? "#3a7acc" : "#666", cursor: "pointer" }}>Fix</button>
+                      <button onClick={() => setHandleCenterY(true)} style={{ flex: 1, padding: "4px", fontSize: 11, fontWeight: 700, borderRadius: 4, border: handleCenterY ? "1.5px solid #3a7acc" : "1px solid #ccc", background: handleCenterY ? "#eef4ff" : "#f0f0f0", color: handleCenterY ? "#3a7acc" : "#666", cursor: "pointer" }}>Középen</button>
                     </div>
-                  </label>
-
-                  {!handleCenter && (
-                    <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>
-                      Kezdő furat táv. oldalról
+                    {!handleCenterY && (
                       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                        <input type="number" value={handleMarginX} onChange={e => setHandleMarginX(+e.target.value)} style={{ ...inputStyle, flex: 1 }} />
+                        <input type="number" value={handleMarginY} onChange={e => setHandleMarginY(+e.target.value)} style={{ ...inputStyle, flex: 1 }} />
                         <span style={{ fontSize: 10, color: "#888" }}>mm</span>
                       </div>
-                    </label>
-                  )}
-
-                  <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>
-                    Kezdő furat táv. fentről
-                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <input type="number" value={handleMarginY} onChange={e => setHandleMarginY(+e.target.value)} style={{ ...inputStyle, flex: 1 }} />
-                      <span style={{ fontSize: 10, color: "#888" }}>mm</span>
-                    </div>
+                    )}
                   </label>
                 </div>
               </div>
@@ -4988,7 +4976,7 @@
                                 <rect x={frontX} y={topY} width={bt * s_sc} height={h * s_sc} fill="#eef4ff" stroke="#3a7acc" strokeWidth={1.5} rx={1} />
 
                                 {/* Drawer handle placeholder on front panel */}
-                                <rect x={frontX + bt * s_sc} y={topY + handleMarginY * s_sc - 2} width={4} height={4} fill="#e46a3a" />
+                                <rect x={frontX + bt * s_sc} y={topY + (handleCenterY ? h * s_sc / 2 : handleMarginY * s_sc) - 2} width={4} height={4} fill="#e46a3a" />
                               </g>
                             );
                           });
@@ -5045,11 +5033,9 @@
                           const dy = dyBase + (previousH + i * drawerGap) * dsc;
                           const dha = h * dsc;
 
-                          const hx1Center = dx + dwa / 2 - (handlePitch / 2) * dsc;
-                          const hx1Custom = dx + handleMarginX * dsc;
-                          const hx1 = handleCenter ? hx1Center : hx1Custom;
+                          const hx1 = dx + dwa / 2 - (handlePitch / 2) * dsc;
                           const hx2 = hx1 + handlePitch * dsc;
-                          const hy = dy + handleMarginY * dsc;
+                          const hy = handleCenterY ? dy + dha / 2 : dy + handleMarginY * dsc;
 
                           return (
                             <g key={i}>
@@ -5075,14 +5061,7 @@
                               <text x={(hx1 + hx2) / 2} y={hy - 14} textAnchor="middle" fontSize={7} fill="#c04000" fontWeight="700" fontFamily="JetBrains Mono">{handlePitch}</text>
 
                               <line x1={(hx1 + hx2) / 2} y1={dy} x2={(hx1 + hx2) / 2} y2={hy} stroke="#e46a3a" strokeWidth={.7} strokeDasharray="3,2" />
-                              <text x={(hx1 + hx2) / 2 + 4} y={(dy + hy) / 2 + 3} textAnchor="start" fontSize={7} fill="#e46a3a" fontWeight="700" fontFamily="JetBrains Mono">{handleMarginY}</text>
-
-                              {!handleCenter && (
-                                <g>
-                                  <line x1={dx} y1={hy + 8} x2={hx1} y2={hy + 8} stroke="#e46a3a" strokeWidth={.7} strokeDasharray="3,2" />
-                                  <text x={(dx + hx1) / 2} y={hy + 16} textAnchor="middle" fontSize={7} fill="#e46a3a" fontWeight="700" fontFamily="JetBrains Mono">{handleMarginX}</text>
-                                </g>
-                              )}
+                              <text x={(hx1 + hx2) / 2 + 4} y={(dy + hy) / 2 + 3} textAnchor="start" fontSize={7} fill="#e46a3a" fontWeight="700" fontFamily="JetBrains Mono">{handleCenterY ? Math.round(h / 2) : handleMarginY}</text>
                             </g>
                           );
                         })}
