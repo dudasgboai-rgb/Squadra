@@ -3865,9 +3865,8 @@
       const [customHeights, setCustomHeights] = usePersistentState("DrawerCalc", "customHeights", {});
 
       const [handlePitch, setHandlePitch] = usePersistentState("DrawerCalc", "handlePitch", params.handlePitch);
-      const [handleMarginX, setHandleMarginX] = usePersistentState("DrawerCalc", "handleMarginX", params.handleMarginX);
-      const [handleMarginY, setHandleMarginY] = usePersistentState("DrawerCalc", "handleMarginY", params.handleMarginY);
-      const [handleCenterY, setHandleCenterY] = usePersistentState("DrawerCalc", "handleCenterY", false);
+      const [handleMarginY, setHandleMarginY] = usePersistentState("DrawerCalc", "handleMarginY", 50);
+      const [handleMarginYOverrides, setHandleMarginYOverrides] = usePersistentState("DrawerCalc", "handleMarginYOverrides", {});
 
       const bt = params.boardThickness;
       const autoTotalCabinetH = variant === "kitchen" ? params.counterHeight - params.countertopThickness : params.cabinetHeight;
@@ -4112,6 +4111,9 @@
           return { w: SKW, d: SKL, h: finalSideH, fbH: fbH, skirt: skirt, botW: botW, botD: botD, posType: posType, usableH: Math.round(usableH), availH: Math.round(availableHeights[i]) };
         });
       }
+
+      const getHandleMarginYForDrawer = (i) => handleMarginYOverrides[i] !== undefined ? handleMarginYOverrides[i] : handleMarginY;
+      const allFrontsEqualHeight = frontsH.length > 0 && frontsH.every(h => h === frontsH[0]);
 
       const getDef = (id) => partDefaults.find(p => p.id === id) || { colorIdx: 0, edges: [{ o: 0, t: 0 }, null, null, null] };
       const sideDef = getDef("lower_side");
@@ -4521,19 +4523,38 @@
                   </label>
 
                   <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>
-                    Kezdő furat táv. fentről
-                    <div style={{ display: "flex", gap: 4, marginBottom: 4 }}>
-                      <button onClick={() => setHandleCenterY(false)} style={{ flex: 1, padding: "4px", fontSize: 11, fontWeight: 700, borderRadius: 4, border: !handleCenterY ? "1.5px solid #3a7acc" : "1px solid #ccc", background: !handleCenterY ? "#eef4ff" : "#f0f0f0", color: !handleCenterY ? "#3a7acc" : "#666", cursor: "pointer" }}>Fix</button>
-                      <button onClick={() => setHandleCenterY(true)} style={{ flex: 1, padding: "4px", fontSize: 11, fontWeight: 700, borderRadius: 4, border: handleCenterY ? "1.5px solid #3a7acc" : "1px solid #ccc", background: handleCenterY ? "#eef4ff" : "#f0f0f0", color: handleCenterY ? "#3a7acc" : "#666", cursor: "pointer" }}>Középen</button>
+                    Foganytyú táv. fentről (alap)
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <input type="number" value={handleMarginY} onChange={e => setHandleMarginY(+e.target.value)} style={{ ...inputStyle, flex: 1 }} />
+                      <span style={{ fontSize: 10, color: "#888" }}>mm</span>
                     </div>
-                    {!handleCenterY && (
-                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                        <input type="number" value={handleMarginY} onChange={e => setHandleMarginY(+e.target.value)} style={{ ...inputStyle, flex: 1 }} />
-                        <span style={{ fontSize: 10, color: "#888" }}>mm</span>
-                      </div>
-                    )}
                   </label>
                 </div>
+
+                {!allFrontsEqualHeight && (
+                  <div style={{ background: "#f8f0e8", border: "1px solid #e8d8c8", borderRadius: 8, padding: 12, marginTop: 10 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: BRN, textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 8 }}>Fogantyú táv. egyéni (fentről)</div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                      {frontsH.map((h, i) => (
+                        <label key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
+                          <span>{i + 1}. fiók</span>
+                          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                            <input
+                              type="number"
+                              value={handleMarginYOverrides[i] !== undefined ? handleMarginYOverrides[i] : handleMarginY}
+                              onChange={e => setHandleMarginYOverrides(prev => ({ ...prev, [i]: +e.target.value }))}
+                              style={{ ...inputStyle, width: 60, padding: "4px 6px", borderColor: handleMarginYOverrides[i] !== undefined ? AMB : undefined }}
+                            />
+                            <span style={{ fontSize: 10, color: "#888" }}>mm</span>
+                            {handleMarginYOverrides[i] !== undefined && (
+                              <button onClick={() => setHandleMarginYOverrides(prev => { const n = { ...prev }; delete n[i]; return n; })} style={{ fontSize: 9, padding: "1px 4px", borderRadius: 4, cursor: "pointer", background: "#f0e0d0", border: "1px solid #c0a080", color: BRN, fontWeight: 700 }}>↩</button>
+                            )}
+                          </div>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Fiókdoboz beállítások */}
@@ -4976,7 +4997,7 @@
                                 <rect x={frontX} y={topY} width={bt * s_sc} height={h * s_sc} fill="#eef4ff" stroke="#3a7acc" strokeWidth={1.5} rx={1} />
 
                                 {/* Drawer handle placeholder on front panel */}
-                                <rect x={frontX + bt * s_sc} y={topY + (handleCenterY ? h * s_sc / 2 : handleMarginY * s_sc) - 2} width={4} height={4} fill="#e46a3a" />
+                                <rect x={frontX + bt * s_sc} y={topY + getHandleMarginYForDrawer(i) * s_sc - 2} width={4} height={4} fill="#e46a3a" />
                               </g>
                             );
                           });
@@ -5035,7 +5056,7 @@
 
                           const hx1 = dx + dwa / 2 - (handlePitch / 2) * dsc;
                           const hx2 = hx1 + handlePitch * dsc;
-                          const hy = handleCenterY ? dy + dha / 2 : dy + handleMarginY * dsc;
+                          const hy = dy + getHandleMarginYForDrawer(i) * dsc;
 
                           return (
                             <g key={i}>
@@ -5061,7 +5082,7 @@
                               <text x={(hx1 + hx2) / 2} y={hy - 14} textAnchor="middle" fontSize={7} fill="#c04000" fontWeight="700" fontFamily="JetBrains Mono">{handlePitch}</text>
 
                               <line x1={(hx1 + hx2) / 2} y1={dy} x2={(hx1 + hx2) / 2} y2={hy} stroke="#e46a3a" strokeWidth={.7} strokeDasharray="3,2" />
-                              <text x={(hx1 + hx2) / 2 + 4} y={(dy + hy) / 2 + 3} textAnchor="start" fontSize={7} fill="#e46a3a" fontWeight="700" fontFamily="JetBrains Mono">{handleCenterY ? Math.round(h / 2) : handleMarginY}</text>
+                              <text x={(hx1 + hx2) / 2 + 4} y={(dy + hy) / 2 + 3} textAnchor="start" fontSize={7} fill="#e46a3a" fontWeight="700" fontFamily="JetBrains Mono">{getHandleMarginYForDrawer(i)}</text>
                             </g>
                           );
                         })}
