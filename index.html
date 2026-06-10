@@ -4464,8 +4464,8 @@
                           const drawH = Math.max(rh, 2);
                           const drawerEl = React.createElement("rect", { key: ri + "d", x: pad2, y: yCur, width: innerW2, height: drawH, rx: 1.5, fill: "currentColor", opacity: active ? 0.78 : 0.38 });
                           const handleW = innerW2 * 0.48;
-                          const handleH = Math.max(1.5, Math.min(2.5, drawH * 0.22));
-                          const handleEl = drawH >= 6 ? React.createElement("rect", { key: ri + "h", x: pad2 + (innerW2 - handleW) / 2, y: yCur + drawH * 0.6, width: handleW, height: handleH, rx: 0.7, fill: active ? "rgba(255,255,255,0.65)" : "rgba(255,255,255,0.5)" }) : null;
+                          const handleH = 1.5;
+                          const handleEl = drawH >= 6 ? React.createElement("rect", { key: ri + "h", x: pad2 + (innerW2 - handleW) / 2, y: yCur + 2.5, width: handleW, height: handleH, rx: 0.75, fill: "currentColor", opacity: 1 }) : null;
                           yCur += rh + gap2;
                           return [drawerEl, handleEl].filter(Boolean);
                         }).flat();
