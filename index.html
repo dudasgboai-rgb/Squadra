@@ -5521,7 +5521,6 @@
       const [d, setD] = usePersistentState("ShelfCalc", "d", 5);
       const [mode, setMode] = usePersistentState("ShelfCalc", "mode", "equal");
       const [showSettings, setShowSettings] = useState(false);
-      const [svgView, setSvgView] = usePersistentState("ShelfCalc", "svgView", "front");
       const [vizRef, setVizRef] = usePersistentState("ShelfCalc", "vizRef", "panel");
       const [shelfConfigs, setShelfConfigs] = usePersistentState("ShelfCalc", "shelfConfigs", [
         { isFixed: false, fixedPos: 500, zoneIdx: 0 },
@@ -5592,7 +5591,7 @@
         });
       }, [H, n, t, d, mode, configs, intH]);
 
-      const SVW = 276, SVH = 600, PT = 43, PB = 96, PL = 26, PR = 108;
+      const SVW = 276, SVH = 600, PT = 43, PB = 96, PL = 42, PR = 92;
       const cabW = SVW - PL - PR; const sc = (SVH - PT - PB) / H; const toY = (v) => PT + (H - v) * sc;
       const fixedCount = configs.filter(c => c.isFixed).length;
 
@@ -5677,22 +5676,33 @@
                       <th rowSpan={2} style={{ padding: "6px 10px", background: GRN, color: "#fff", fontSize: 10, fontWeight: 700, textTransform: "uppercase", verticalAlign: "middle", borderRight: "1px solid rgba(255,255,255,.15)" }}>Polc</th>
                       <th colSpan={3} style={{ padding: "5px 10px", background: "#2a5a14", color: "#c8e8b0", fontSize: 10, fontWeight: 700, textTransform: "uppercase", textAlign: "center", borderRight: "1px solid rgba(255,255,255,.15)" }}>{"\u2191"} Aljától (mm)</th>
                       <th colSpan={3} style={{ padding: "5px 10px", background: "#3a2a14", color: "#e8d0a0", fontSize: 10, fontWeight: 700, textTransform: "uppercase", textAlign: "center" }}>{"\u2193"} Tetejétől (mm)</th>
+                      <th rowSpan={2} style={{ padding: "6px 10px", background: "#5a4a3a", color: "#fff", fontSize: 10, fontWeight: 700, textTransform: "uppercase", verticalAlign: "middle" }}>Polcköz (mm)</th>
                     </tr><tr>
                         {[["Polc alja", "#2a5a14"], ["Polc teteje", "#2a5a14"], ["\uD83D\uDD34 Furat", "#7a1010"], ["Polc alja", "#3a2a14"], ["Polc teteje", "#3a2a14"], ["\uD83D\uDD34 Furat", "#7a1010"]].map(([l, bg], i) => (
                           <th key={i} style={{ padding: "5px 10px", background: bg, color: "#fff", fontSize: 10, fontWeight: 700, textTransform: "uppercase", whiteSpace: "nowrap", borderRight: "1px solid rgba(255,255,255,.1)" }}>{l}</th>
                         ))}
                       </tr></thead>
-                    <tbody>{shelves.map((s, i) => (
-                      <tr key={s.idx} style={{ background: i % 2 ? "#f8f6f2" : "#fff" }}>
-                        <td style={{ padding: "7px 10px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap" }}>{s.idx}. polc {s.isFixed && <span style={{ fontSize: 10, background: "#d8f0c8", color: GRN, padding: "1px 6px", borderRadius: 99, marginLeft: 5, fontWeight: 600 }}>fix</span>}</td>
-                        <td style={{ padding: "7px 10px" }}>{monoSpan(s.panelBot)}</td>
-                        <td style={{ padding: "7px 10px", color: "#666" }}>{monoSpan(s.panelTop)}</td>
-                        <td style={{ padding: "7px 10px", color: RED, fontWeight: 700, background: "#fff5f5" }}>{monoSpan(s.drillCenter)}</td>
-                        <td style={{ padding: "7px 10px", borderLeft: "2px solid #e0d4b0" }}>{monoSpan(R(H - s.panelBot))}</td>
-                        <td style={{ padding: "7px 10px", color: "#666" }}>{monoSpan(R(H - s.panelTop))}</td>
-                        <td style={{ padding: "7px 10px", color: RED, fontWeight: 700, background: "#fff5f5" }}>{monoSpan(R(H - s.drillCenter))}</td>
-                      </tr>
-                    ))}</tbody>
+                    <tbody>
+                      {shelves.map((s, i) => (
+                        <tr key={s.idx} style={{ background: i % 2 ? "#f8f6f2" : "#fff" }}>
+                          <td style={{ padding: "7px 10px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap" }}>{s.idx}. polc {s.isFixed && <span style={{ fontSize: 10, background: "#d8f0c8", color: GRN, padding: "1px 6px", borderRadius: 99, marginLeft: 5, fontWeight: 600 }}>fix</span>}</td>
+                          <td style={{ padding: "7px 10px" }}>{monoSpan(s.panelBot)}</td>
+                          <td style={{ padding: "7px 10px", color: "#666" }}>{monoSpan(s.panelTop)}</td>
+                          <td style={{ padding: "7px 10px", color: RED, fontWeight: 700, background: "#fff5f5" }}>{monoSpan(s.drillCenter)}</td>
+                          <td style={{ padding: "7px 10px", borderLeft: "2px solid #e0d4b0" }}>{monoSpan(R(H - s.panelBot))}</td>
+                          <td style={{ padding: "7px 10px", color: "#666" }}>{monoSpan(R(H - s.panelTop))}</td>
+                          <td style={{ padding: "7px 10px", color: RED, fontWeight: 700, background: "#fff5f5" }}>{monoSpan(R(H - s.drillCenter))}</td>
+                          <td style={{ padding: "7px 10px", fontWeight: 600, color: "#4a3a2a", background: "#fcfaf6", borderLeft: "2px solid #e8e2d0" }}>{monoSpan(s.spaceBelow)}</td>
+                        </tr>
+                      ))}
+                      {shelves.length > 0 && (
+                        <tr style={{ background: "#fdfbf7", borderTop: "2px solid #e8e2d0" }}>
+                          <td style={{ padding: "7px 10px", fontWeight: 700, color: "#6a5a4a" }}>Legfelső polcköz</td>
+                          <td colSpan={6} style={{ padding: "7px 10px", color: "#888", fontSize: 11 }}>A legfelső polc feletti szabad tér</td>
+                          <td style={{ padding: "7px 10px", fontWeight: 700, color: "#4a3a2a", background: "#fcfaf6", borderLeft: "2px solid #e8e2d0" }}>{monoSpan(shelves[shelves.length - 1].spaceAbove)}</td>
+                        </tr>
+                      )}
+                    </tbody>
                   </table>
                 </div>
               </div>
@@ -5705,21 +5715,32 @@
                       <th rowSpan={2} style={{ padding: "6px 10px", background: GRN, color: "#fff", fontSize: 10, fontWeight: 700, textTransform: "uppercase", verticalAlign: "middle", borderRight: "1px solid rgba(255,255,255,.15)" }}>Polc</th>
                       <th colSpan={3} style={{ padding: "5px 10px", background: "#2a5a14", color: "#c8e8b0", fontSize: 10, fontWeight: 700, textTransform: "uppercase", textAlign: "center", borderRight: "1px solid rgba(255,255,255,.15)" }}>{"\u2191"} Aljától (mm)</th>
                       <th colSpan={3} style={{ padding: "5px 10px", background: "#3a2a14", color: "#e8d0a0", fontSize: 10, fontWeight: 700, textTransform: "uppercase", textAlign: "center" }}>{"\u2193"} Tetejétől (mm)</th>
+                      <th rowSpan={2} style={{ padding: "6px 10px", background: "#5a4a3a", color: "#fff", fontSize: 10, fontWeight: 700, textTransform: "uppercase", verticalAlign: "middle" }}>Polcköz (mm)</th>
                     </tr><tr>
                         {[["Polc alja", "#2a5a14"], ["Polc teteje", "#2a5a14"], ["\uD83D\uDD34 Furat", "#7a1010"], ["Polc alja", "#3a2a14"], ["Polc teteje", "#3a2a14"], ["\uD83D\uDD34 Furat", "#7a1010"]].map(([l, bg], i) => (
                           <th key={i} style={{ padding: "5px 10px", background: bg, color: "#fff", fontSize: 10, fontWeight: 700, textTransform: "uppercase", whiteSpace: "nowrap", borderRight: "1px solid rgba(255,255,255,.1)" }}>{l}</th>
                         ))}
                       </tr></thead>
-                    <tbody>{shelves.map((s, i) => {
-                      const drill = R(s.intBot - d / 2); return (
-                        <tr key={s.idx} style={{ background: i % 2 ? "#f8f6f2" : "#fff" }}>
-                          <td style={{ padding: "7px 10px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap" }}>{s.idx}. polc {s.isFixed && <span style={{ fontSize: 10, background: "#d8f0c8", color: GRN, padding: "1px 6px", borderRadius: 99, marginLeft: 5, fontWeight: 600 }}>fix</span>}</td>
-                          <td style={{ padding: "7px 10px" }}>{monoSpan(s.intBot)}</td><td style={{ padding: "7px 10px", color: "#666" }}>{monoSpan(s.intTop)}</td>
-                          <td style={{ padding: "7px 10px", color: RED, fontWeight: 700, background: "#fff5f5" }}>{monoSpan(drill)}</td>
-                          <td style={{ padding: "7px 10px", borderLeft: "2px solid #e0d4b0" }}>{monoSpan(R(intH - s.intBot))}</td><td style={{ padding: "7px 10px", color: "#666" }}>{monoSpan(R(intH - s.intTop))}</td>
-                          <td style={{ padding: "7px 10px", color: RED, fontWeight: 700, background: "#fff5f5" }}>{monoSpan(R(intH - drill))}</td>
-                        </tr>);
-                    })}</tbody>
+                    <tbody>
+                      {shelves.map((s, i) => {
+                        const drill = R(s.intBot - d / 2); return (
+                          <tr key={s.idx} style={{ background: i % 2 ? "#f8f6f2" : "#fff" }}>
+                            <td style={{ padding: "7px 10px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap" }}>{s.idx}. polc {s.isFixed && <span style={{ fontSize: 10, background: "#d8f0c8", color: GRN, padding: "1px 6px", borderRadius: 99, marginLeft: 5, fontWeight: 600 }}>fix</span>}</td>
+                            <td style={{ padding: "7px 10px" }}>{monoSpan(s.intBot)}</td><td style={{ padding: "7px 10px", color: "#666" }}>{monoSpan(s.intTop)}</td>
+                            <td style={{ padding: "7px 10px", color: RED, fontWeight: 700, background: "#fff5f5" }}>{monoSpan(drill)}</td>
+                            <td style={{ padding: "7px 10px", borderLeft: "2px solid #e0d4b0" }}>{monoSpan(R(intH - s.intBot))}</td><td style={{ padding: "7px 10px", color: "#666" }}>{monoSpan(R(intH - s.intTop))}</td>
+                            <td style={{ padding: "7px 10px", color: RED, fontWeight: 700, background: "#fff5f5" }}>{monoSpan(R(intH - drill))}</td>
+                            <td style={{ padding: "7px 10px", fontWeight: 600, color: "#4a3a2a", background: "#fcfaf6", borderLeft: "2px solid #e8e2d0" }}>{monoSpan(s.spaceBelow)}</td>
+                          </tr>);
+                      })}
+                      {shelves.length > 0 && (
+                        <tr style={{ background: "#fdfbf7", borderTop: "2px solid #e8e2d0" }}>
+                          <td style={{ padding: "7px 10px", fontWeight: 700, color: "#6a5a4a" }}>Legfelső polcköz</td>
+                          <td colSpan={6} style={{ padding: "7px 10px", color: "#888", fontSize: 11 }}>A legfelső polc feletti szabad tér</td>
+                          <td style={{ padding: "7px 10px", fontWeight: 700, color: "#4a3a2a", background: "#fcfaf6", borderLeft: "2px solid #e8e2d0" }}>{monoSpan(shelves[shelves.length - 1].spaceAbove)}</td>
+                        </tr>
+                      )}
+                    </tbody>
                   </table>
                 </div>
               </div>
@@ -5727,65 +5748,133 @@
             {/* SVG Viz */}
             <div style={{ background: "#fff", borderRadius: 14, padding: 14, boxShadow: "0 1px 6px rgba(0,0,0,.07)", position: "sticky", top: 16 }}>
               <div style={{ fontWeight: 800, fontSize: 12, color: "var(--text-secondary)", textAlign: "center", marginBottom: 8, letterSpacing: ".06em", textTransform: "uppercase" }}>Vizualizáció</div>
-              <div style={{ display: "flex", gap: 6, marginBottom: 10, justifyContent: "center" }}>
-                {[["front", "Szekrény"], ["side", "Oldallap"]].map(([id, label]) => (
-                  <button key={id} onClick={() => setSvgView(id)} style={{ padding: "4px 12px", borderRadius: 7, fontSize: 11, cursor: "pointer", background: svgView === id ? GRN : "#ede8e0", color: svgView === id ? "#fff" : "#6a5a4a", border: "none", fontWeight: 700, fontFamily: "Inter" }}>{label}</button>
-                ))}
-              </div>
-              <div style={{ display: "flex", gap: 6, marginBottom: 10, justifyContent: "center" }}>
-                {[["panel", "\uD83D\uDCCF Szabad oldallap"], ["internal", "\uD83D\uDCE6 Összeszrelt"]].map(([id, label]) => (
-                  <button key={id} onClick={() => setVizRef(id)} style={{ padding: "4px 10px", borderRadius: 7, fontSize: 10, cursor: "pointer", background: vizRef === id ? "#6a4a2a" : "#ede8e0", color: vizRef === id ? "#fff" : "#6a5a4a", border: "none", fontWeight: 700, fontFamily: "Inter" }}>{label}</button>
+              <div style={{ display: "flex", gap: 8, marginBottom: 12, justifyContent: "center" }}>
+                {[
+                  ["panel", "Szabad oldallapon mért"],
+                  ["internal", "Szekrényben mért"]
+                ].map(([id, label]) => (
+                  <button key={id} onClick={() => setVizRef(id)} style={{
+                    padding: "8px 14px",
+                    borderRadius: 8,
+                    fontSize: 11.5,
+                    cursor: "pointer",
+                    background: vizRef === id ? GRN : "#ede8e0",
+                    color: vizRef === id ? "#fff" : "#6a5a4a",
+                    border: "none",
+                    fontWeight: 700,
+                    fontFamily: "Inter",
+                    transition: "all 0.15s"
+                  }}>{label}</button>
                 ))}
               </div>
               <ZoomableSvg width={SVW} height={SVH}>
                 <svg width={SVW} height={SVH} style={{ display: "block", margin: "0 auto" }}>
                   <defs><pattern id="grid" width={8} height={8} patternUnits="userSpaceOnUse"><path d="M 8 0 L 0 0 0 8" fill="none" stroke="#e0dbd0" strokeWidth=".4" /></pattern></defs>
                   <rect width={SVW} height={SVH} fill="#fff" rx={8} /><rect width={SVW} height={SVH} fill="url(#grid)" rx={8} />
-                  {svgView === "front" ? (() => {
-                    const x0 = PL, y0 = PT, cw = cabW;
-                    return (<>
-                      <rect x={x0} y={y0} width={cw} height={H * sc} fill="#e8d8b8" stroke={BRD} strokeWidth={1.5} rx={1} />
-                      <rect x={x0} y={toY(t)} width={cw} height={t * sc} fill="#c4a560" stroke={BRD} strokeWidth={.5} />
-                      <rect x={x0} y={y0} width={cw} height={t * sc} fill="#c4a560" stroke={BRD} strokeWidth={.5} />
-                      {shelves.map(s => {
-                        const dim = vizRef === "panel" ? s.drillCenter : R(s.intBot - d / 2); return (
-                          <g key={s.idx}>
-                            <rect x={x0} y={toY(s.panelBot + t)} width={cw} height={Math.max(2, t * sc)} fill={s.isFixed ? "#e09030" : "#d4a843"} stroke={BRD} strokeWidth={.5} opacity={.9} />
-                            <text x={x0 + cw / 2} y={toY(s.panelBot + t) + Math.max(2, t * sc) / 2 + 3} textAnchor="middle" fontSize={8} fill="#fff" fontWeight="800" fontFamily="Inter">{s.idx}.</text>
-                            <line x1={x0 + cw} y1={toY(s.drillCenter)} x2={x0 + cw + 5} y2={toY(s.drillCenter)} stroke={RED} strokeWidth={.8} />
-                            <text x={x0 + cw + 7} y={toY(s.drillCenter) + 3.5} fontSize={8.5} fill={RED} fontWeight="700" fontFamily="JetBrains Mono">{dim}</text>
-                          </g>);
-                      })}
-                      <line x1={x0 - 9} y1={y0} x2={x0 - 9} y2={y0 + H * sc} stroke="#666" strokeWidth={.8} />
-                      <line x1={x0 - 13} y1={y0} x2={x0 - 5} y2={y0} stroke="#666" strokeWidth={.8} />
-                      <line x1={x0 - 13} y1={y0 + H * sc} x2={x0 - 5} y2={y0 + H * sc} stroke="#666" strokeWidth={.8} />
-                      <text x={x0 - 11} y={y0 + (H * sc) / 2 + 3} textAnchor="middle" fontSize={8} fill="#555" transform={`rotate(-90,${x0 - 11},${y0 + (H * sc) / 2})`}>{H} mm</text>
-                      <text x={x0 - 1} y={y0 + H * sc + 10} textAnchor="end" fontSize={7} fill="#888">0</text>
-                      <text x={x0 - 1} y={y0 - 3} textAnchor="end" fontSize={7} fill="#888">{H}</text>
-                    </>);
-                  })() : (() => {
+                  {(() => {
                     const px = PL, pw = cabW;
+                    const r_vis = Math.max(2.5, d * sc * .5);
                     return (<>
                       <rect x={px} y={PT} width={pw} height={H * sc} fill="#e8d8b8" stroke={BRD} strokeWidth={1.5} rx={1} />
                       <rect x={px} y={toY(t)} width={pw} height={t * sc} fill="#c4a560" stroke={BRD} strokeWidth={.5} />
                       <rect x={px} y={PT} width={pw} height={t * sc} fill="#c4a560" stroke={BRD} strokeWidth={.5} />
                       {shelves.map(s => {
-                        const dim = vizRef === "panel" ? s.drillCenter : R(s.intBot - d / 2); return (
+                        const dim = vizRef === "panel" ? s.drillCenter : R(s.intBot - d / 2);
+                        const cy_dot = toY(s.panelBot) + r_vis;
+                        return (
                           <g key={s.idx}>
                             <rect x={px} y={toY(s.panelBot + t)} width={pw} height={Math.max(2, t * sc)} fill={s.isFixed ? "#e09030" : "#d4a843"} stroke={BRD} strokeWidth={.5} opacity={.7} />
                             <text x={px + pw / 2} y={toY(s.panelBot + t) + Math.max(2, t * sc) / 2 + 3} textAnchor="middle" fontSize={8} fill="#fff" fontWeight="800" fontFamily="Inter">{s.idx}.</text>
-                            <circle cx={px + pw * .25} cy={toY(s.drillCenter)} r={Math.max(2.5, d * sc * .5)} fill={RED} stroke="#880000" strokeWidth={.5} />
-                            <circle cx={px + pw * .75} cy={toY(s.drillCenter)} r={Math.max(2.5, d * sc * .5)} fill={RED} stroke="#880000" strokeWidth={.5} opacity={.5} />
+                            
+                            {/* Furat jelölések a polc ALATT (érintőlegesen) */}
+                            <circle cx={px + pw * .25} cy={cy_dot} r={r_vis} fill={RED} stroke="#880000" strokeWidth={.5} />
+                            <circle cx={px + pw * .75} cy={cy_dot} r={r_vis} fill={RED} stroke="#880000" strokeWidth={.5} opacity={.5} />
+                            
+                            {/* Furatközéppont méretezése */}
                             <line x1={px + pw} y1={toY(s.drillCenter)} x2={px + pw + 4} y2={toY(s.drillCenter)} stroke={RED} strokeWidth={.8} strokeDasharray="2,1.5" />
                             <text x={px + pw + 6} y={toY(s.drillCenter) + 3.5} fontSize={8.5} fill={RED} fontWeight="700" fontFamily="JetBrains Mono">{dim}</text>
                           </g>);
                       })}
-                      <line x1={px - 9} y1={PT} x2={px - 9} y2={PT + H * sc} stroke="#666" strokeWidth={.8} />
-                      <line x1={px - 13} y1={PT} x2={px - 5} y2={PT} stroke="#666" strokeWidth={.8} />
-                      <line x1={px - 13} y1={PT + H * sc} x2={px - 5} y2={PT + H * sc} stroke="#666" strokeWidth={.8} />
-                      <text x={px - 11} y={PT + (H * sc) / 2 + 3} textAnchor="middle" fontSize={8} fill="#555" transform={`rotate(-90,${px - 11},${PT + (H * sc) / 2})`}>{H} mm</text>
-                      <text x={px - 1} y={PT + H * sc + 10} textAnchor="end" fontSize={7} fill="#888">0</text>
-                      <text x={px - 1} y={PT - 3} textAnchor="end" fontSize={7} fill="#888">{H}</text>
+                      
+                      {/* Polcalj magasságok szintvonalas méretezése bal oldalon */}
+                      {shelves.length > 0 && (() => {
+                        const x_dim = 24;
+                        const y_start = vizRef === "panel" ? toY(0) : toY(t);
+                        return (
+                          <g>
+                            <line x1={x_dim} y1={y_start} x2={x_dim} y2={toY(shelves[shelves.length - 1].panelBot)} stroke="#6a5a4a" strokeWidth={0.8} />
+                            <line x1={x_dim - 3} y1={y_start} x2={x_dim + 3} y2={y_start} stroke="#6a5a4a" strokeWidth={0.8} />
+                            <text x={x_dim - 5} y={y_start + 3} textAnchor="end" fontSize={8} fill="#6a5a4a" fontWeight="700" fontFamily="JetBrains Mono">0</text>
+                            {shelves.map(s => {
+                              const y_shelf = toY(s.panelBot);
+                              const val = vizRef === "panel" ? s.panelBot : s.intBot;
+                              return (
+                                <g key={`shelf-dim-${s.idx}`}>
+                                  <line x1={px} y1={y_shelf} x2={x_dim} y2={y_shelf} stroke="#6a5a4a" strokeWidth={0.6} strokeDasharray="2,2" />
+                                  <line x1={x_dim - 3} y1={y_shelf} x2={x_dim + 3} y2={y_shelf} stroke="#6a5a4a" strokeWidth={0.8} />
+                                  <text x={x_dim - 5} y={y_shelf + 3} textAnchor="end" fontSize={8.5} fill="#6a5a4a" fontWeight="700" fontFamily="JetBrains Mono">{val}</text>
+                                </g>
+                              );
+                            })}
+                          </g>
+                        );
+                      })()}
+                      
+                      {/* Belső polcközök (tiszta rekeszmagasságok) méretvonalai a szekrény belsejében */}
+                      {shelves.length > 0 && (() => {
+                        const gDim = [];
+                        const x_mid = px + pw / 2;
+                        
+                        // 1. Legalsó rekesz
+                        {
+                          const yTop = toY(shelves[0].panelBot);
+                          const yBot = toY(t);
+                          const val = shelves[0].spaceBelow;
+                          gDim.push({ yTop, yBot, val, key: "gap-bottom" });
+                        }
+                        
+                        // 2. Közbülső rekeszek
+                        for (let i = 1; i < shelves.length; i++) {
+                          const yTop = toY(shelves[i].panelBot);
+                          const yBot = toY(shelves[i-1].panelTop);
+                          const val = shelves[i].spaceBelow;
+                          gDim.push({ yTop, yBot, val, key: `gap-mid-${i}` });
+                        }
+                        
+                        // 3. Legfelső rekesz
+                        {
+                          const yTop = toY(H - t);
+                          const yBot = toY(shelves[shelves.length - 1].panelTop);
+                          const val = shelves[shelves.length - 1].spaceAbove;
+                          gDim.push({ yTop, yBot, val, key: "gap-top" });
+                        }
+                        
+                        return gDim.map(g => {
+                          const height = g.yBot - g.yTop;
+                          if (height < 14) return null;
+                          return (
+                            <g key={g.key}>
+                              <line x1={x_mid} y1={g.yTop + 2} x2={x_mid} y2={g.yBot - 2} stroke="#8a7a6a" strokeWidth={0.65} strokeDasharray="3,2" />
+                              <line x1={x_mid - 4} y1={g.yTop} x2={x_mid + 4} y2={g.yTop} stroke="#8a7a6a" strokeWidth={0.65} />
+                              <line x1={x_mid - 4} y1={g.yBot} x2={x_mid + 4} y2={g.yBot} stroke="#8a7a6a" strokeWidth={0.65} />
+                              <rect x={x_mid - 15} y={g.yTop + height / 2 - 6} width={30} height={12} fill="#fff" rx={2} opacity={0.85} />
+                              <text x={x_mid} y={g.yTop + height / 2 + 3} textAnchor="middle" fontSize={8} fill="#6a5a4a" fontWeight="800" fontFamily="JetBrains Mono">
+                                {g.val}
+                              </text>
+                            </g>
+                          );
+                        });
+                      })()}
+                      
+                      {/* Teljes magasság méretvonal */}
+                      <g>
+                        <line x1={10} y1={PT} x2={10} y2={PT + H * sc} stroke="#666" strokeWidth={.8} />
+                        <line x1={6} y1={PT} x2={14} y2={PT} stroke="#666" strokeWidth={.8} />
+                        <line x1={6} y1={PT + H * sc} x2={14} y2={PT + H * sc} stroke="#666" strokeWidth={.8} />
+                        <text x={8} y={PT + (H * sc) / 2} textAnchor="middle" fontSize={8} fill="#555" transform={`rotate(-90,8,${PT + (H * sc) / 2})`}>{H} mm</text>
+                        <text x={px - 5} y={PT + H * sc + 10} textAnchor="end" fontSize={7} fill="#888">0</text>
+                        <text x={px - 5} y={PT - 3} textAnchor="end" fontSize={7} fill="#888">{H}</text>
+                      </g>
                     </>);
                   })()}
                   <rect x={4} y={SVH - 78} width={SVW - 8} height={74} fill="white" rx={5} stroke="#e0dbd0" strokeWidth={1} />
@@ -5793,7 +5882,8 @@
                   <text x={26} y={SVH - 62} fontSize={8} fill="#5a4a3a" fontFamily="Inter">Aljlap / Tetőlap ({t} mm)</text>
                   <rect x={12} y={SVH - 54} width={10} height={7} fill="#d4a843" stroke={BRD} strokeWidth={.5} />
                   <text x={26} y={SVH - 48} fontSize={8} fill="#5a4a3a" fontFamily="Inter">Polc ({t} mm)</text>
-                  {svgView === "side" ? (<><circle cx={17} cy={SVH - 35} r={4} fill={RED} /><text x={26} y={SVH - 31} fontSize={8} fill="#5a4a3a" fontFamily="Inter">Furat ({"\u00d8"}{d})</text></>) : (<><line x1={12} y1={SVH - 33} x2={22} y2={SVH - 33} stroke={RED} strokeWidth={1.5} /><text x={26} y={SVH - 29} fontSize={8} fill="#5a4a3a" fontFamily="Inter">Furat közép</text></>)}
+                  <circle cx={17} cy={SVH - 35} r={4} fill={RED} />
+                  <text x={26} y={SVH - 31} fontSize={8} fill="#5a4a3a" fontFamily="Inter">Furat ({"\u00d8"}{d})</text>
                   <text x={12} y={SVH - 14} fontSize={7.5} fill={RED} fontWeight="700" fontFamily="JetBrains Mono">{"\u2190"} furat közép (mm)</text>
                 </svg>
               </ZoomableSvg>
