@@ -667,7 +667,7 @@
             {/* Left: Cabinet-specific inputs */}
             <div>
               <div style={cardStyle}>
-                <div style={{ fontWeight: 800, fontSize: 14, color: BRN, marginBottom: 12 }}>{"\uD83D\uDEAA"} 1 ajtós alsó szekrény</div>
+                <div style={{ fontWeight: 800, fontSize: 14, color: "var(--color-primary-700)", marginBottom: 12 }}>{"\uD83D\uDEAA"} 1 ajtós alsó szekrény</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {/* Szekrény szélessége */}
                   <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
@@ -698,7 +698,7 @@
                       {customH !== null && (
                         <button onClick={() => setCustomH(null)} style={{
                           fontSize: 9, padding: "1px 6px", borderRadius: 5, cursor: "pointer",
-                          background: "#f0e0d0", border: "1px solid #c0a080", color: BRN, fontWeight: 700
+                          background: "var(--color-neutral-100)", border: "1px solid var(--color-border)", color: "var(--color-text-secondary)", fontWeight: 700
                         }}>↩ Auto ({autoTotalCabinetH} mm)</button>
                       )}
                     </div>
@@ -837,7 +837,7 @@
 
                 {/* Computed summary */}
                 <div style={{ marginTop: 16, background: "#f8f0e8", borderRadius: 8, padding: 12, border: "1px solid #e0c8a0" }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: BRN, textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 8 }}>Számított méretek</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "var(--color-primary-700)", textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 8 }}>Számított méretek</div>
                   {[
                     ["Oldallap H", sideH + " mm"],
                     ["Belső szél.", internalW + " mm"],
@@ -859,7 +859,7 @@
             {/* Center: Parts list + color/edge + Door UI */}
             <div>
               <div style={cardStyle}>
-                <div style={{ fontWeight: 800, fontSize: 14, color: BRN, marginBottom: 12 }}>{"\uD83D\uDCCB"} Alkatrészlista</div>
+                <div style={{ fontWeight: 800, fontSize: 14, color: "var(--color-primary-700)", marginBottom: 12 }}>{"\uD83D\uDCCB"} Alkatrészlista</div>
                 <div style={{ overflowX: "auto" }}>
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
                     <thead>
@@ -867,7 +867,7 @@
                         {["Alkatrész", "db", "H × Sz (mm)  ⇄", "Vtg.", "Szín", "Élek (H1·H2·Sz1·Sz2)", "Megj."].map((h, i) => (
                           <th key={i} style={{
                             padding: "7px 6px", textAlign: "left", fontSize: 9, fontWeight: 700,
-                            background: BRN, color: "#fff", textTransform: "uppercase", letterSpacing: ".03em",
+                            background: "var(--color-primary-700)", color: "#fff", textTransform: "uppercase", letterSpacing: ".03em",
                             whiteSpace: "nowrap", borderRight: "1px solid rgba(255,255,255,.1)"
                           }}>{h}</th>
                         ))}
@@ -964,7 +964,7 @@
               </div>
 
               <div style={{ ...cardStyle, marginTop: 16 }}>
-                <div style={{ fontWeight: 800, fontSize: 13, color: BRN, marginBottom: 12 }}>{"\uD83D\uDEAA"} Ajtólap és Vasalat beállítások</div>
+                <div style={{ fontWeight: 800, fontSize: 13, color: "var(--color-primary-700)", marginBottom: 12 }}>{"\uD83D\uDEAA"} Ajtólap és Vasalat beállítások</div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
                   <GlobalHandleSelector
                     orient={handleOrient}
@@ -1701,7 +1701,7 @@
             {/* Left: Cabinet-specific inputs */}
             <div>
               <div style={cardStyle}>
-                <div style={{ fontWeight: 800, fontSize: 14, color: BRN, marginBottom: 12 }}>{"\uD83D\uDEAA\uD83D\uDEAA"} 2 ajtós alsó szekrény</div>
+                <div style={{ fontWeight: 800, fontSize: 14, color: "var(--color-primary-700)", marginBottom: 12 }}>{"\uD83D\uDEAA\uD83D\uDEAA"} 2 ajtós alsó szekrény</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {/* Szekrény szélessége */}
                   <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
@@ -1732,7 +1732,7 @@
                       {customH !== null && (
                         <button onClick={() => setCustomH(null)} style={{
                           fontSize: 9, padding: "1px 6px", borderRadius: 5, cursor: "pointer",
-                          background: "#f0e0d0", border: "1px solid #c0a080", color: BRN, fontWeight: 700
+                          background: "var(--color-neutral-100)", border: "1px solid var(--color-border)", color: "var(--color-text-secondary)", fontWeight: 700
                         }}>↩ Auto ({autoTotalCabinetH} mm)</button>
                       )}
                     </div>
@@ -1871,7 +1871,7 @@
 
                 {/* Computed summary */}
                 <div style={{ marginTop: 16, background: "#f8f0e8", borderRadius: 8, padding: 12, border: "1px solid #e0c8a0" }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: BRN, textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 8 }}>Számított méretek</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "var(--color-primary-700)", textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 8 }}>Számított méretek</div>
                   {[
                     ["Oldallap H", sideH + " mm"],
                     ["Belső szél.", internalW + " mm"],
@@ -1893,7 +1893,7 @@
             {/* Center: Parts list + color/edge + Door UI */}
             <div>
               <div style={cardStyle}>
-                <div style={{ fontWeight: 800, fontSize: 14, color: BRN, marginBottom: 12 }}>{"\uD83D\uDCCB"} Alkatrészlista</div>
+                <div style={{ fontWeight: 800, fontSize: 14, color: "var(--color-primary-700)", marginBottom: 12 }}>{"\uD83D\uDCCB"} Alkatrészlista</div>
                 <div style={{ overflowX: "auto" }}>
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
                     <thead>
@@ -1901,7 +1901,7 @@
                         {["Alkatrész", "db", "H × Sz (mm)  ⇄", "Vtg.", "Szín", "Élek (H1·H2·Sz1·Sz2)", "Megj."].map((h, i) => (
                           <th key={i} style={{
                             padding: "7px 6px", textAlign: "left", fontSize: 9, fontWeight: 700,
-                            background: BRN, color: "#fff", textTransform: "uppercase", letterSpacing: ".03em",
+                            background: "var(--color-primary-700)", color: "#fff", textTransform: "uppercase", letterSpacing: ".03em",
                             whiteSpace: "nowrap", borderRight: "1px solid rgba(255,255,255,.1)"
                           }}>{h}</th>
                         ))}
@@ -1998,7 +1998,7 @@
               </div>
 
               <div style={{ ...cardStyle, marginTop: 16 }}>
-                <div style={{ fontWeight: 800, fontSize: 13, color: BRN, marginBottom: 12 }}>{"\uD83D\uDEAA"} Ajtólap és Vasalat beállítások</div>
+                <div style={{ fontWeight: 800, fontSize: 13, color: "var(--color-primary-700)", marginBottom: 12 }}>{"\uD83D\uDEAA"} Ajtólap és Vasalat beállítások</div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
                   <GlobalHandleSelector
                     orient={handleOrient}
@@ -2626,11 +2626,11 @@
 
       return (
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: 16 }}>
-          <button onClick={onBack} style={{ padding: "6px 16px", borderRadius: 8, background: "rgba(90,42,10,.1)", border: "1.5px solid rgba(90,42,10,.2)", color: BRN, fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "Inter, sans-serif", marginBottom: 16 }}>{"←"} Vissza a szekrénytípusokhoz</button>
+          <button onClick={onBack} style={{ padding: "6px 16px", borderRadius: 8, background: "rgba(0,0,0,.04)", border: "1.5px solid var(--color-border)", color: "var(--color-text-secondary)", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "Inter, sans-serif", marginBottom: 16 }}>{"←"} Vissza a szekrénytípusokhoz</button>
           <div style={{ display: "grid", gridTemplateColumns: "340px 1fr", gap: 20, alignItems: "start" }}>
             <div>
               <div style={cardStyle}>
-                <div style={{ fontWeight: 800, fontSize: 14, color: BRN, marginBottom: 12 }}>{"🚪"} 1 ajtós felső szekrény</div>
+                <div style={{ fontWeight: 800, fontSize: 14, color: "var(--color-primary-700)", marginBottom: 12 }}>{"🚪"} 1 ajtós felső szekrény</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
                     Szekrény szélessége
@@ -2647,7 +2647,7 @@
                   <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <span>Szekrény magassága</span>
-                      {customH !== null && (<button onClick={() => setCustomH(null)} style={{ fontSize: 9, padding: "1px 6px", borderRadius: 5, cursor: "pointer", background: "#f0e0d0", border: "1px solid #c0a080", color: BRN, fontWeight: 700 }}>{"↩"} Auto ({autoTotalCabinetH} mm)</button>)}
+                      {customH !== null && (<button onClick={() => setCustomH(null)} style={{ fontSize: 9, padding: "1px 6px", borderRadius: 5, cursor: "pointer", background: "var(--color-neutral-100)", border: "1px solid var(--color-border)", color: "var(--color-text-secondary)", fontWeight: 700 }}>{"↩"} Auto ({autoTotalCabinetH} mm)</button>)}
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                       <input type="number" value={customH !== null ? customH : autoTotalCabinetH} min={100} onChange={e => setCustomH(e.target.value === "" ? "" : +e.target.value)} style={{ ...inputStyle, fontSize: 14, borderColor: customH !== null ? AMB : "#ddd" }} />
@@ -2718,7 +2718,7 @@
                   </label>
                 </div>
                 <div style={{ marginTop: 16, background: "#f8f0e8", borderRadius: 8, padding: 12, border: "1px solid #e0c8a0" }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: BRN, textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 8 }}>Számított méretek</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "var(--color-primary-700)", textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 8 }}>Számított méretek</div>
                   {[["Oldallap H", sideH + " mm"], ["Belső szél.", internalW + " mm"], ["Belső mag.", internalH + " mm"], ["Fenéklap sz.", bottomPanelL + " mm"], ["Hátlap", backPanelW + " × " + backPanelH + " mm"], ["Polc mélys.", shelfDepth + " mm"], ["Ajtó", doorW + " × " + doorH + " mm"]].map(([l, v]) => (
                     <div key={l} style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 4 }}>
                       <span style={{ color: "#6a5a4a" }}>{l}:</span>
@@ -2731,11 +2731,11 @@
 
             <div>
               <div style={cardStyle}>
-                <div style={{ fontWeight: 800, fontSize: 14, color: BRN, marginBottom: 12 }}>{"📋"} Alkatrészlista</div>
+                <div style={{ fontWeight: 800, fontSize: 14, color: "var(--color-primary-700)", marginBottom: 12 }}>{"📋"} Alkatrészlista</div>
                 <div style={{ overflowX: "auto" }}>
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
                     <thead>
-                      <tr>{["Alkatrész", "db", "H × Sz (mm)  ⇄", "Vtg.", "Szín", "Élek (H1·H2·Sz1·Sz2)", "Megj."].map((h, i) => (<th key={i} style={{ padding: "7px 6px", textAlign: "left", fontSize: 9, fontWeight: 700, background: BRN, color: "#fff", textTransform: "uppercase", letterSpacing: ".03em", whiteSpace: "nowrap", borderRight: "1px solid rgba(255,255,255,.1)" }}>{h}</th>))}</tr>
+                      <tr>{["Alkatrész", "db", "H × Sz (mm)  ⇄", "Vtg.", "Szín", "Élek (H1·H2·Sz1·Sz2)", "Megj."].map((h, i) => (<th key={i} style={{ padding: "7px 6px", textAlign: "left", fontSize: 9, fontWeight: 700, background: "var(--color-primary-700)", color: "#fff", textTransform: "uppercase", letterSpacing: ".03em", whiteSpace: "nowrap", borderRight: "1px solid rgba(255,255,255,.1)" }}>{h}</th>))}</tr>
                     </thead>
                     <tbody>
                       {parts.map((p, i) => {
@@ -2783,7 +2783,7 @@
               </div>
 
               <div style={{ ...cardStyle, marginTop: 16 }}>
-                <div style={{ fontWeight: 800, fontSize: 13, color: BRN, marginBottom: 12 }}>{"🚪"} Ajtólap és Vasalat beállítások</div>
+                <div style={{ fontWeight: 800, fontSize: 13, color: "var(--color-primary-700)", marginBottom: 12 }}>{"🚪"} Ajtólap és Vasalat beállítások</div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
                   <GlobalHandleSelector orient={handleOrient} isCentered={handleCenter} handing={doorHanding} onChange={(o, c) => { setHandleOrient(o); setHandleCenter(c); }} />
                   <DoorHandingSelector handing={doorHanding} onChange={setDoorHanding} />
@@ -3091,11 +3091,11 @@
 
       return (
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: 16 }}>
-          <button onClick={onBack} style={{ padding: "6px 16px", borderRadius: 8, background: "rgba(90,42,10,.1)", border: "1.5px solid rgba(90,42,10,.2)", color: BRN, fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "Inter, sans-serif", marginBottom: 16 }}>{"←"} Vissza a szekrénytípusokhoz</button>
+          <button onClick={onBack} style={{ padding: "6px 16px", borderRadius: 8, background: "rgba(0,0,0,.04)", border: "1.5px solid var(--color-border)", color: "var(--color-text-secondary)", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "Inter, sans-serif", marginBottom: 16 }}>{"←"} Vissza a szekrénytípusokhoz</button>
           <div style={{ display: "grid", gridTemplateColumns: "340px 1fr", gap: 20, alignItems: "start" }}>
             <div>
               <div style={cardStyle}>
-                <div style={{ fontWeight: 800, fontSize: 14, color: BRN, marginBottom: 12 }}>{"🚪🚪"} 2 ajtós felső szekrény</div>
+                <div style={{ fontWeight: 800, fontSize: 14, color: "var(--color-primary-700)", marginBottom: 12 }}>{"🚪🚪"} 2 ajtós felső szekrény</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
                     Szekrény szélessége
@@ -3107,7 +3107,7 @@
                   <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <span>Szekrény magassága</span>
-                      {customH !== null && (<button onClick={() => setCustomH(null)} style={{ fontSize: 9, padding: "1px 6px", borderRadius: 5, cursor: "pointer", background: "#f0e0d0", border: "1px solid #c0a080", color: BRN, fontWeight: 700 }}>{"↩"} Auto ({autoTotalCabinetH} mm)</button>)}
+                      {customH !== null && (<button onClick={() => setCustomH(null)} style={{ fontSize: 9, padding: "1px 6px", borderRadius: 5, cursor: "pointer", background: "var(--color-neutral-100)", border: "1px solid var(--color-border)", color: "var(--color-text-secondary)", fontWeight: 700 }}>{"↩"} Auto ({autoTotalCabinetH} mm)</button>)}
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={customH !== null ? customH : autoTotalCabinetH} min={100} onChange={e => setCustomH(e.target.value === "" ? "" : +e.target.value)} style={{ ...inputStyle, fontSize: 14, borderColor: customH !== null ? AMB : "#ddd" }} /><span style={{ fontSize: 11, color: "#888", fontWeight: 600 }}>mm</span></div>
                     {customH === null && <span style={{ fontSize: 9, color: "#aaa" }}>Számított: {autoTotalCabinetH} mm (módosítható)</span>}
@@ -3153,7 +3153,7 @@
                   </label>
                 </div>
                 <div style={{ marginTop: 16, background: "#f8f0e8", borderRadius: 8, padding: 12, border: "1px solid #e0c8a0" }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: BRN, textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 8 }}>Számított méretek</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "var(--color-primary-700)", textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 8 }}>Számított méretek</div>
                   {[["Oldallap H", sideH + " mm"], ["Belső szél.", internalW + " mm"], ["Belső mag.", internalH + " mm"], ["Fenéklap sz.", bottomPanelL + " mm"], ["Hátlap", backPanelW + " × " + backPanelH + " mm"], ["Polc mélys.", shelfDepth + " mm"], ["Ajtó (1 db)", doorW + " × " + doorH + " mm"]].map(([l, v]) => (
                     <div key={l} style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 4 }}><span style={{ color: "#6a5a4a" }}>{l}:</span><span style={{ fontFamily: "JetBrains Mono, monospace", fontWeight: 700, color: "var(--text)" }}>{v}</span></div>
                   ))}
@@ -3163,10 +3163,10 @@
 
             <div>
               <div style={cardStyle}>
-                <div style={{ fontWeight: 800, fontSize: 14, color: BRN, marginBottom: 12 }}>{"📋"} Alkatrészlista</div>
+                <div style={{ fontWeight: 800, fontSize: 14, color: "var(--color-primary-700)", marginBottom: 12 }}>{"📋"} Alkatrészlista</div>
                 <div style={{ overflowX: "auto" }}>
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
-                    <thead><tr>{["Alkatrész", "db", "H × Sz (mm)  ⇄", "Vtg.", "Szín", "Élek (H1·H2·Sz1·Sz2)", "Megj."].map((h, i) => (<th key={i} style={{ padding: "7px 6px", textAlign: "left", fontSize: 9, fontWeight: 700, background: BRN, color: "#fff", textTransform: "uppercase", letterSpacing: ".03em", whiteSpace: "nowrap", borderRight: "1px solid rgba(255,255,255,.1)" }}>{h}</th>))}</tr></thead>
+                    <thead><tr>{["Alkatrész", "db", "H × Sz (mm)  ⇄", "Vtg.", "Szín", "Élek (H1·H2·Sz1·Sz2)", "Megj."].map((h, i) => (<th key={i} style={{ padding: "7px 6px", textAlign: "left", fontSize: 9, fontWeight: 700, background: "var(--color-primary-700)", color: "#fff", textTransform: "uppercase", letterSpacing: ".03em", whiteSpace: "nowrap", borderRight: "1px solid rgba(255,255,255,.1)" }}>{h}</th>))}</tr></thead>
                     <tbody>
                       {parts.map((p, i) => {
                         const dims = getDisplayDims(p); const isSwapped = !!swappedParts[p.id];
@@ -3193,7 +3193,7 @@
               </div>
 
               <div style={{ ...cardStyle, marginTop: 16 }}>
-                <div style={{ fontWeight: 800, fontSize: 13, color: BRN, marginBottom: 12 }}>{"🚪"} Ajtólap és Vasalat beállítások</div>
+                <div style={{ fontWeight: 800, fontSize: 13, color: "var(--color-primary-700)", marginBottom: 12 }}>{"🚪"} Ajtólap és Vasalat beállítások</div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
                   <GlobalHandleSelector orient={handleOrient} isCentered={handleCenter} handing={doorHanding} onChange={(o, c) => { setHandleOrient(o); setHandleCenter(c); }} />
                   <DoorHandingSelector handing={doorHanding} onChange={setDoorHanding} />
@@ -4302,7 +4302,7 @@
             {/* Left Column */}
             <div>
               <div style={cardStyle}>
-                <div style={{ fontWeight: 800, fontSize: 14, color: BRN, marginBottom: 12 }}>{"\uD83D\uDDC4\uFE0F"} Fiókos szekrény</div>
+                <div style={{ fontWeight: 800, fontSize: 14, color: "var(--color-primary-700)", marginBottom: 12 }}>{"\uD83D\uDDC4\uFE0F"} Fiókos szekrény</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
                     Szekrény szélessége
@@ -4326,7 +4326,7 @@
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <span>Korpusz magassága</span>
                       {customH !== null && (
-                        <button onClick={() => setCustomH(null)} style={{ fontSize: 9, padding: "1px 6px", borderRadius: 5, cursor: "pointer", background: "#f0e0d0", border: "1px solid #c0a080", color: BRN, fontWeight: 700 }}>↩ Auto ({autoCorpusH} mm)</button>
+                        <button onClick={() => setCustomH(null)} style={{ fontSize: 9, padding: "1px 6px", borderRadius: 5, cursor: "pointer", background: "var(--color-neutral-100)", border: "1px solid var(--color-border)", color: "var(--color-text-secondary)", fontWeight: 700 }}>↩ Auto ({autoCorpusH} mm)</button>
                       )}
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -4441,13 +4441,13 @@
             {/* Center Column */}
             <div>
               <div style={cardStyle}>
-                <div style={{ fontWeight: 800, fontSize: 14, color: BRN, marginBottom: 12 }}>{"\uD83D\uDCCB"} Alkatrészlista</div>
+                <div style={{ fontWeight: 800, fontSize: 14, color: "var(--color-primary-700)", marginBottom: 12 }}>{"\uD83D\uDCCB"} Alkatrészlista</div>
                 <div style={{ overflowX: "auto" }}>
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
                     <thead>
                       <tr>
                         {["Alkatrész", "db", "H × Sz (mm)  ⇄", "Vtg.", "Szín", "Élek (H1·H2·Sz1·Sz2)", "Megj."].map((h, i) => (
-                          <th key={i} style={{ padding: "7px 6px", textAlign: "left", fontSize: 9, fontWeight: 700, background: BRN, color: "#fff", textTransform: "uppercase", letterSpacing: ".03em", whiteSpace: "nowrap", borderRight: "1px solid rgba(255,255,255,.1)" }}>{h}</th>
+                          <th key={i} style={{ padding: "7px 6px", textAlign: "left", fontSize: 9, fontWeight: 700, background: "var(--color-primary-700)", color: "#fff", textTransform: "uppercase", letterSpacing: ".03em", whiteSpace: "nowrap", borderRight: "1px solid rgba(255,255,255,.1)" }}>{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -4513,7 +4513,7 @@
 
               {/* Fiók és Fogantyú beállítások */}
               <div style={{ ...cardStyle, marginTop: 16 }}>
-                <div style={{ fontWeight: 800, fontSize: 13, color: BRN, marginBottom: 12 }}>{"\uD83D\uDDC4\uFE0F"} Fiók előlap és Fogantyú beállítások</div>
+                <div style={{ fontWeight: 800, fontSize: 13, color: "var(--color-primary-700)", marginBottom: 12 }}>{"\uD83D\uDDC4\uFE0F"} Fiók előlap és Fogantyú beállítások</div>
 
                 <div style={{ display: "flex", gap: 16, marginBottom: 16, flexWrap: "wrap" }}>
                   <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
@@ -4609,7 +4609,7 @@
                             })}
                           </div>
                           <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
-                            <button disabled={!hasOverride} onClick={() => { const k = getPresetKey(); setPresetRatioOverrides(prev => { const n = { ...prev }; delete n[k]; return n; }); }} style={{ fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 6, cursor: hasOverride ? "pointer" : "not-allowed", background: hasOverride ? "#fff0e8" : "#f5f5f5", color: hasOverride ? BRN : "#aaa", border: `1.5px solid ${hasOverride ? "#e8c8a0" : "#e0e0e0"}` }}>↩ Visszaállítás</button>
+                            <button disabled={!hasOverride} onClick={() => { const k = getPresetKey(); setPresetRatioOverrides(prev => { const n = { ...prev }; delete n[k]; return n; }); }} style={{ fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 6, cursor: hasOverride ? "pointer" : "not-allowed", background: hasOverride ? "var(--color-neutral-100)" : "#f5f5f5", color: hasOverride ? "var(--color-text-secondary)" : "#aaa", border: `1.5px solid ${hasOverride ? "var(--color-border)" : "#e0e0e0"}` }}>↩ Visszaállítás</button>
                             <button onClick={() => {
                               try {
                                 const defKey = "appDefault_DrawerCalc_presetRatioOverrides";
@@ -4617,7 +4617,7 @@
                                 localStorage.setItem(defKey, JSON.stringify({ ...existing, [overrideKey]: currentRatios }));
                               } catch(e) {}
                               alert("Mentve alapértelmezettként!");
-                            }} style={{ fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 6, cursor: "pointer", background: "#f0f8f0", color: "#3a7a3a", border: "1.5px solid #b0d8b0" }}>★ Mentés alapértelmezettként</button>
+                            }} style={{ fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 6, cursor: "pointer", background: "var(--color-success-bg)", color: "var(--color-success-text)", border: "1.5px solid var(--color-accent-200)" }}>★ Mentés alapértelmezettként</button>
                           </div>
                           {hasOverride && <div style={{ fontSize: 9, color: AMB, marginTop: 6, fontWeight: 700 }}>✦ Egyedi arányok aktívak ehhez a projekthez</div>}
                         </div>
@@ -4627,8 +4627,8 @@
                 )}
 
                 {drawerDist === "custom" && (
-                  <div style={{ background: "#f8f0e8", border: "1px solid #e8d8c8", borderRadius: 8, padding: 12, marginBottom: 16 }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: BRN, textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 8 }}>Egyedi előlap magasságok</div>
+                  <div style={{ background: "var(--color-primary-50)", border: "1px solid var(--color-primary-200)", borderRadius: 8, padding: 12, marginBottom: 16 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "var(--color-primary-700)", textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 8 }}>Egyedi előlap magasságok</div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                       {Array.from({ length: drawerCount }).map((_, i) => (
                         <label key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
@@ -4663,7 +4663,7 @@
 
                 {!allFrontsEqualHeight && (
                   <div style={{ background: "#f8f0e8", border: "1px solid #e8d8c8", borderRadius: 8, padding: 12, marginTop: 10 }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: BRN, textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 8 }}>Fogantyú táv. egyéni (fentről)</div>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "var(--color-primary-700)", textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 8 }}>Fogantyú táv. egyéni (fentről)</div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                       {frontsH.map((h, i) => (
                         <label key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
@@ -4677,7 +4677,7 @@
                             />
                             <span style={{ fontSize: 10, color: "#888" }}>mm</span>
                             {handleMarginYOverrides[i] !== undefined && (
-                              <button onClick={() => setHandleMarginYOverrides(prev => { const n = { ...prev }; delete n[i]; return n; })} style={{ fontSize: 9, padding: "1px 4px", borderRadius: 4, cursor: "pointer", background: "#f0e0d0", border: "1px solid #c0a080", color: BRN, fontWeight: 700 }}>↩</button>
+                              <button onClick={() => setHandleMarginYOverrides(prev => { const n = { ...prev }; delete n[i]; return n; })} style={{ fontSize: 9, padding: "1px 4px", borderRadius: 4, cursor: "pointer", background: "var(--color-neutral-100)", border: "1px solid var(--color-border)", color: "var(--color-text-secondary)", fontWeight: 700 }}>↩</button>
                             )}
                           </div>
                         </label>
@@ -4689,7 +4689,7 @@
 
               {/* Fiókdoboz beállítások */}
               <div style={{ ...cardStyle, marginTop: 16 }}>
-                <div style={{ fontWeight: 800, fontSize: 13, color: BRN, marginBottom: 12 }}>{"\uD83D\uDCE6"} Fiókdoboz beállítások</div>
+                <div style={{ fontWeight: 800, fontSize: 13, color: "var(--color-primary-700)", marginBottom: 12 }}>{"\uD83D\uDCE6"} Fiókdoboz beállítások</div>
                 <div style={{ display: "flex", gap: 16, marginBottom: 16, flexWrap: "wrap" }}>
                   <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, flex: 1, minWidth: 200 }}>
                     Fióksín típusa
@@ -5693,27 +5693,27 @@
                   <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 8, textTransform: "uppercase", letterSpacing: ".06em" }}>Elosztás módja</div>
                   <div style={{ display: "flex", gap: 8 }}>
                     {[["equal", "\u2696\uFE0F Egyenlő elosztás"], ["custom", "\uD83D\uDCCC Egyedi polc pozíciók"]].map(([id, label]) => (
-                      <button key={id} onClick={() => setMode(id)} style={{ padding: "8px 16px", borderRadius: 9, fontSize: 13, fontWeight: 700, cursor: "pointer", background: mode === id ? GRN : "#ede8e0", color: mode === id ? "#fff" : "#5a4a3a", border: mode === id ? `2px solid ${GRN}` : "2px solid transparent", transition: "all .15s", fontFamily: "Inter, sans-serif" }}>{label}</button>
+                      <button key={id} onClick={() => setMode(id)} style={{ padding: "8px 16px", borderRadius: 9, fontSize: 13, fontWeight: 700, cursor: "pointer", background: mode === id ? GRN : "var(--color-neutral-100)", color: mode === id ? "#fff" : "var(--color-text-secondary)", border: mode === id ? `2px solid ${GRN}` : "2px solid transparent", transition: "all .15s", fontFamily: "Inter, sans-serif" }}>{label}</button>
                     ))}
                   </div>
                 </div>
                 {mode === "custom" && (
-                  <div style={{ marginTop: 14, background: "#f3f9ee", padding: 16, borderRadius: 10, border: "1.5px solid #bdd9ac" }}>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: "#3a5a2a", marginBottom: 10, textTransform: "uppercase", letterSpacing: ".05em" }}>Polcok beállítása egyenként</div>
+                  <div style={{ marginTop: 14, background: "var(--color-success-bg)", padding: 16, borderRadius: 10, border: "1.5px solid var(--color-accent-200)" }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "var(--color-accent-800)", marginBottom: 10, textTransform: "uppercase", letterSpacing: ".05em" }}>Polcok beállítása egyenként</div>
                     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                       {configs.map((cfg, i) => {
                         const cz = Math.min(Math.max(0, cfg.zoneIdx || 0), Math.max(0, zoneInfo.labels.length - 1));
                         return (
-                          <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, background: cfg.isFixed ? "#e8f4dc" : "#fff", padding: "8px 12px", borderRadius: 8, border: cfg.isFixed ? "1.5px solid #9cc87a" : "1.5px solid #e0dbd0" }}>
+                          <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, background: cfg.isFixed ? "var(--color-accent-50)" : "#fff", padding: "8px 12px", borderRadius: 8, border: cfg.isFixed ? "1.5px solid var(--color-accent-200)" : "1.5px solid var(--color-border)" }}>
                             <span style={{ fontWeight: 800, fontSize: 13, color: "var(--text)", minWidth: 58, fontFamily: "JetBrains Mono" }}>{i + 1}. polc</span>
-                            <button onClick={() => updateConfig(i, 'isFixed', !cfg.isFixed)} style={{ padding: "4px 10px", borderRadius: 6, fontSize: 11, cursor: "pointer", fontWeight: 700, fontFamily: "Inter", minWidth: 100, textAlign: "center", background: cfg.isFixed ? GRN : "#e8e2d8", color: cfg.isFixed ? "#fff" : "#6a5a4a", border: cfg.isFixed ? `1.5px solid ${GRN}` : "1.5px solid #ccc" }}>{cfg.isFixed ? "\uD83D\uDCCC Rögzített" : "\uD83D\uDD04 Auto"}</button>
+                            <button onClick={() => updateConfig(i, 'isFixed', !cfg.isFixed)} style={{ padding: "4px 10px", borderRadius: 6, fontSize: 11, cursor: "pointer", fontWeight: 700, fontFamily: "Inter", minWidth: 100, textAlign: "center", background: cfg.isFixed ? GRN : "var(--color-neutral-100)", color: cfg.isFixed ? "#fff" : "var(--color-text-secondary)", border: cfg.isFixed ? `1.5px solid ${GRN}` : "1.5px solid var(--color-border)" }}>{cfg.isFixed ? "\uD83D\uDCCC Rögzített" : "\uD83D\uDD04 Auto"}</button>
                             {cfg.isFixed ? (
                               <div style={{ display: "flex", alignItems: "center", gap: 4, flex: 1 }}>
-                                <input type="number" value={cfg.fixedPos} min={0} onChange={e => updateConfig(i, 'fixedPos', e.target.value === "" ? "" : Math.max(0, Number(e.target.value)))} style={{ padding: "5px 8px", border: "1.5px solid #9cc87a", borderRadius: 6, fontSize: 14, fontWeight: 700, fontFamily: "JetBrains Mono", color: GRN, background: "#fff", width: 90, outline: "none" }} />
-                                <span style={{ fontSize: 11, color: "#6a8a50", fontWeight: 600 }}>mm</span>
+                                <input type="number" value={cfg.fixedPos} min={0} onChange={e => updateConfig(i, 'fixedPos', e.target.value === "" ? "" : Math.max(0, Number(e.target.value)))} style={{ padding: "5px 8px", border: "1.5px solid var(--color-accent-200)", borderRadius: 6, fontSize: 14, fontWeight: 700, fontFamily: "JetBrains Mono", color: GRN, background: "#fff", width: 90, outline: "none" }} />
+                                <span style={{ fontSize: 11, color: "var(--color-accent-600)", fontWeight: 600 }}>mm</span>
                               </div>
                             ) : (
-                              <select value={cz} onChange={e => updateConfig(i, 'zoneIdx', +e.target.value)} style={{ padding: "5px 8px", border: "1.5px solid #d0caba", borderRadius: 6, fontSize: 11, fontWeight: 600, fontFamily: "Inter", color: "#4a3a2a", background: "#fff", flex: 1, cursor: "pointer", outline: "none" }}>
+                              <select value={cz} onChange={e => updateConfig(i, 'zoneIdx', +e.target.value)} style={{ padding: "5px 8px", border: "1.5px solid var(--color-border)", borderRadius: 6, fontSize: 11, fontWeight: 600, fontFamily: "Inter", color: "var(--color-text-primary)", background: "#fff", flex: 1, cursor: "pointer", outline: "none" }}>
                                 {zoneInfo.labels.map((label, zi) => <option key={zi} value={zi}>{label}</option>)}
                               </select>
                             )}
@@ -5721,16 +5721,16 @@
                         );
                       })}
                     </div>
-                    <div style={{ marginTop: 12, fontSize: 11, color: "#5a7a40", fontWeight: 600, lineHeight: 1.6, padding: "8px 10px", background: "#e0f0d0", borderRadius: 6, border: "1px solid #c8e0b0" }}>
+                    <div style={{ marginTop: 12, fontSize: 11, color: "var(--color-success-text)", fontWeight: 600, lineHeight: 1.6, padding: "8px 10px", background: "var(--color-success-bg)", borderRadius: 6, border: "1px solid var(--color-accent-200)" }}>
                       {"\uD83D\uDCCC"} <strong>Rögzített</strong>: pontos pozíció. {"\uD83D\uDD04"} <strong>Auto</strong>: egyenletes elosztás a kiválasztott zónában.
                       {fixedCount === 0 && <><br />{"\u26A0\uFE0F"} Nincs rögzített polc.</>}
                     </div>
                   </div>
                 )}
                 <div style={{ marginTop: 14 }}>
-                  <button onClick={() => setShowSettings(s => !s)} style={{ padding: "5px 14px", border: "1.5px solid #d8cfc0", borderRadius: 8, background: "#faf7f2", fontSize: 12, cursor: "pointer", color: "#6a5a4a", fontFamily: "Inter", fontWeight: 600 }}>{"\u2699\uFE0F"} Lap/furat beállítások {showSettings ? "\u25B2" : "\u25BC"}</button>
+                  <button onClick={() => setShowSettings(s => !s)} style={{ padding: "5px 14px", border: "1.5px solid var(--color-border)", borderRadius: 8, background: "var(--color-surface)", fontSize: 12, cursor: "pointer", color: "var(--color-text-secondary)", fontFamily: "Inter", fontWeight: 600 }}>{"\u2699\uFE0F"} Lap/furat beállítások {showSettings ? "\u25B2" : "\u25BC"}</button>
                   {showSettings && (
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 12, background: "#faf7f0", padding: 14, borderRadius: 10, border: "1.5px solid #e0d4b8" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 12, background: "var(--color-neutral-50)", padding: 14, borderRadius: 10, border: "1.5px solid var(--color-border)" }}>
                       {[{ label: "Bútorlap vastagság (mm)", hint: "18 mm", val: t, set: v => setT(Math.max(1, v)) }, { label: "Furat átmérő (mm)", hint: "5 mm", val: d, set: v => setD(Math.max(1, v)) }].map(f => (
                         <label key={f.label} style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
                           {f.label}<span style={{ fontSize: 10, color: "#aaa" }}>{f.hint}</span>
@@ -5741,9 +5741,9 @@
                   )}
                 </div>
               </div>
-              <div style={{ background: "var(--green-light)", borderRadius: "var(--radius)", padding: "12px 18px", marginBottom: 16, display: "flex", gap: 28, flexWrap: "wrap", border: "1px solid #A7F3D0" }}>
+              <div style={{ background: "var(--color-success-bg)", borderRadius: "var(--radius)", padding: "12px 18px", marginBottom: 16, display: "flex", gap: 28, flexWrap: "wrap", border: "1px solid var(--color-accent-200)" }}>
                 {[["Belső mag.", `${intH} mm`], ["Lapvtg.", `${t} mm`], ["Furat \u00d8", `${d} mm`], ["Polcok", `${n} db`]].map(([l, v]) => (
-                  <div key={l}><div style={{ fontSize: 10, color: "#4a7030", textTransform: "uppercase", letterSpacing: ".06em", fontWeight: 700 }}>{l}</div><div style={{ fontSize: 18, fontWeight: 800, color: GRN, fontFamily: "JetBrains Mono" }}>{v}</div></div>
+                  <div key={l}><div style={{ fontSize: 10, color: "var(--color-accent-800)", textTransform: "uppercase", letterSpacing: ".06em", fontWeight: 700 }}>{l}</div><div style={{ fontSize: 18, fontWeight: 800, color: GRN, fontFamily: "JetBrains Mono" }}>{v}</div></div>
                 ))}
               </div>
               {/* Table 1 */}
@@ -5753,11 +5753,11 @@
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                     <thead><tr>
                       <th rowSpan={2} style={{ padding: "6px 10px", background: GRN, color: "#fff", fontSize: 10, fontWeight: 700, textTransform: "uppercase", verticalAlign: "middle", borderRight: "1px solid rgba(255,255,255,.15)" }}>Polc</th>
-                      <th colSpan={3} style={{ padding: "5px 10px", background: "#2a5a14", color: "#c8e8b0", fontSize: 10, fontWeight: 700, textTransform: "uppercase", textAlign: "center", borderRight: "1px solid rgba(255,255,255,.15)" }}>{"\u2191"} Aljától (mm)</th>
-                      <th colSpan={3} style={{ padding: "5px 10px", background: "#3a2a14", color: "#e8d0a0", fontSize: 10, fontWeight: 700, textTransform: "uppercase", textAlign: "center" }}>{"\u2193"} Tetejétől (mm)</th>
-                      <th rowSpan={2} style={{ padding: "6px 10px", background: "#5a4a3a", color: "#fff", fontSize: 10, fontWeight: 700, textTransform: "uppercase", verticalAlign: "middle" }}>Polcköz (mm)</th>
+                      <th colSpan={3} style={{ padding: "5px 10px", background: "var(--color-primary-700)", color: "var(--color-primary-50)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", textAlign: "center", borderRight: "1px solid rgba(255,255,255,.15)" }}>{"\u2191"} Aljától (mm)</th>
+                      <th colSpan={3} style={{ padding: "5px 10px", background: "var(--color-primary-800)", color: "var(--color-primary-100)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", textAlign: "center" }}>{"\u2193"} Tetejétől (mm)</th>
+                      <th rowSpan={2} style={{ padding: "6px 10px", background: "var(--color-neutral-800)", color: "#fff", fontSize: 10, fontWeight: 700, textTransform: "uppercase", verticalAlign: "middle" }}>Polcköz (mm)</th>
                     </tr><tr>
-                        {[["Polc alja", "#2a5a14"], ["Polc teteje", "#2a5a14"], ["\uD83D\uDD34 Furat", "#7a1010"], ["Polc alja", "#3a2a14"], ["Polc teteje", "#3a2a14"], ["\uD83D\uDD34 Furat", "#7a1010"]].map(([l, bg], i) => (
+                        {[["Polc alja", "var(--color-primary-700)"], ["Polc teteje", "var(--color-primary-700)"], ["\uD83D\uDD34 Furat", "var(--color-danger-600)"], ["Polc alja", "var(--color-primary-800)"], ["Polc teteje", "var(--color-primary-800)"], ["\uD83D\uDD34 Furat", "var(--color-danger-600)"]].map(([l, bg], i) => (
                           <th key={i} style={{ padding: "5px 10px", background: bg, color: "#fff", fontSize: 10, fontWeight: 700, textTransform: "uppercase", whiteSpace: "nowrap", borderRight: "1px solid rgba(255,255,255,.1)" }}>{l}</th>
                         ))}
                       </tr></thead>
@@ -5768,17 +5768,17 @@
                           <td style={{ padding: "7px 10px" }}>{monoSpan(s.panelBot)}</td>
                           <td style={{ padding: "7px 10px", color: "#666" }}>{monoSpan(s.panelTop)}</td>
                           <td style={{ padding: "7px 10px", color: RED, fontWeight: 700, background: "#fff5f5" }}>{monoSpan(s.drillCenter)}</td>
-                          <td style={{ padding: "7px 10px", borderLeft: "2px solid #e0d4b0" }}>{monoSpan(R(H - s.panelBot))}</td>
+                          <td style={{ padding: "7px 10px", borderLeft: "2px solid var(--color-border)" }}>{monoSpan(R(H - s.panelBot))}</td>
                           <td style={{ padding: "7px 10px", color: "#666" }}>{monoSpan(R(H - s.panelTop))}</td>
                           <td style={{ padding: "7px 10px", color: RED, fontWeight: 700, background: "#fff5f5" }}>{monoSpan(R(H - s.drillCenter))}</td>
-                          <td style={{ padding: "7px 10px", fontWeight: 600, color: "#4a3a2a", background: "#fcfaf6", borderLeft: "2px solid #e8e2d0" }}>{monoSpan(s.spaceBelow)}</td>
+                          <td style={{ padding: "7px 10px", fontWeight: 600, color: "var(--color-text-primary)", background: "var(--color-neutral-50)", borderLeft: "2px solid var(--color-border)" }}>{monoSpan(s.spaceBelow)}</td>
                         </tr>
                       ))}
                       {shelves.length > 0 && (
-                        <tr style={{ background: "#fdfbf7", borderTop: "2px solid #e8e2d0" }}>
-                          <td style={{ padding: "7px 10px", fontWeight: 700, color: "#6a5a4a" }}>Legfelső polcköz</td>
+                        <tr style={{ background: "var(--color-neutral-50)", borderTop: "2px solid var(--color-border)" }}>
+                          <td style={{ padding: "7px 10px", fontWeight: 700, color: "var(--color-text-secondary)" }}>Legfelső polcköz</td>
                           <td colSpan={6} style={{ padding: "7px 10px", color: "#888", fontSize: 11 }}>A legfelső polc feletti szabad tér</td>
-                          <td style={{ padding: "7px 10px", fontWeight: 700, color: "#4a3a2a", background: "#fcfaf6", borderLeft: "2px solid #e8e2d0" }}>{monoSpan(shelves[shelves.length - 1].spaceAbove)}</td>
+                          <td style={{ padding: "7px 10px", fontWeight: 700, color: "var(--color-text-primary)", background: "var(--color-neutral-50)", borderLeft: "2px solid var(--color-border)" }}>{monoSpan(shelves[shelves.length - 1].spaceAbove)}</td>
                         </tr>
                       )}
                     </tbody>
@@ -5792,31 +5792,31 @@
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                     <thead><tr>
                       <th rowSpan={2} style={{ padding: "6px 10px", background: GRN, color: "#fff", fontSize: 10, fontWeight: 700, textTransform: "uppercase", verticalAlign: "middle", borderRight: "1px solid rgba(255,255,255,.15)" }}>Polc</th>
-                      <th colSpan={3} style={{ padding: "5px 10px", background: "#2a5a14", color: "#c8e8b0", fontSize: 10, fontWeight: 700, textTransform: "uppercase", textAlign: "center", borderRight: "1px solid rgba(255,255,255,.15)" }}>{"\u2191"} Aljától (mm)</th>
-                      <th colSpan={3} style={{ padding: "5px 10px", background: "#3a2a14", color: "#e8d0a0", fontSize: 10, fontWeight: 700, textTransform: "uppercase", textAlign: "center" }}>{"\u2193"} Tetejétől (mm)</th>
-                      <th rowSpan={2} style={{ padding: "6px 10px", background: "#5a4a3a", color: "#fff", fontSize: 10, fontWeight: 700, textTransform: "uppercase", verticalAlign: "middle" }}>Polcköz (mm)</th>
+                      <th colSpan={3} style={{ padding: "5px 10px", background: "var(--color-primary-700)", color: "var(--color-primary-50)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", textAlign: "center", borderRight: "1px solid rgba(255,255,255,.15)" }}>{"\u2191"} Aljától (mm)</th>
+                      <th colSpan={3} style={{ padding: "5px 10px", background: "var(--color-primary-800)", color: "var(--color-primary-100)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", textAlign: "center" }}>{"\u2193"} Tetejétől (mm)</th>
+                      <th rowSpan={2} style={{ padding: "6px 10px", background: "var(--color-neutral-800)", color: "#fff", fontSize: 10, fontWeight: 700, textTransform: "uppercase", verticalAlign: "middle" }}>Polcköz (mm)</th>
                     </tr><tr>
-                        {[["Polc alja", "#2a5a14"], ["Polc teteje", "#2a5a14"], ["\uD83D\uDD34 Furat", "#7a1010"], ["Polc alja", "#3a2a14"], ["Polc teteje", "#3a2a14"], ["\uD83D\uDD34 Furat", "#7a1010"]].map(([l, bg], i) => (
+                        {[["Polc alja", "var(--color-primary-700)"], ["Polc teteje", "var(--color-primary-700)"], ["\uD83D\uDD34 Furat", "var(--color-danger-600)"], ["Polc alja", "var(--color-primary-800)"], ["Polc teteje", "var(--color-primary-800)"], ["\uD83D\uDD34 Furat", "var(--color-danger-600)"]].map(([l, bg], i) => (
                           <th key={i} style={{ padding: "5px 10px", background: bg, color: "#fff", fontSize: 10, fontWeight: 700, textTransform: "uppercase", whiteSpace: "nowrap", borderRight: "1px solid rgba(255,255,255,.1)" }}>{l}</th>
                         ))}
                       </tr></thead>
                     <tbody>
                       {shelves.map((s, i) => {
                         const drill = R(s.intBot - d / 2); return (
-                          <tr key={s.idx} style={{ background: i % 2 ? "#f8f6f2" : "#fff" }}>
-                            <td style={{ padding: "7px 10px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap" }}>{s.idx}. polc {s.isFixed && <span style={{ fontSize: 10, background: "#d8f0c8", color: GRN, padding: "1px 6px", borderRadius: 99, marginLeft: 5, fontWeight: 600 }}>fix</span>}</td>
+                          <tr key={s.idx} style={{ background: i % 2 ? "var(--color-neutral-50)" : "#fff" }}>
+                            <td style={{ padding: "7px 10px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap" }}>{s.idx}. polc {s.isFixed && <span style={{ fontSize: 10, background: "var(--color-success-bg)", color: "var(--color-success-icon)", padding: "1px 6px", borderRadius: 99, marginLeft: 5, fontWeight: 600 }}>fix</span>}</td>
                             <td style={{ padding: "7px 10px" }}>{monoSpan(s.intBot)}</td><td style={{ padding: "7px 10px", color: "#666" }}>{monoSpan(s.intTop)}</td>
                             <td style={{ padding: "7px 10px", color: RED, fontWeight: 700, background: "#fff5f5" }}>{monoSpan(drill)}</td>
-                            <td style={{ padding: "7px 10px", borderLeft: "2px solid #e0d4b0" }}>{monoSpan(R(intH - s.intBot))}</td><td style={{ padding: "7px 10px", color: "#666" }}>{monoSpan(R(intH - s.intTop))}</td>
+                            <td style={{ padding: "7px 10px", borderLeft: "2px solid var(--color-border)" }}>{monoSpan(R(intH - s.intBot))}</td><td style={{ padding: "7px 10px", color: "#666" }}>{monoSpan(R(intH - s.intTop))}</td>
                             <td style={{ padding: "7px 10px", color: RED, fontWeight: 700, background: "#fff5f5" }}>{monoSpan(R(intH - drill))}</td>
-                            <td style={{ padding: "7px 10px", fontWeight: 600, color: "#4a3a2a", background: "#fcfaf6", borderLeft: "2px solid #e8e2d0" }}>{monoSpan(s.spaceBelow)}</td>
+                            <td style={{ padding: "7px 10px", fontWeight: 600, color: "var(--color-text-primary)", background: "var(--color-neutral-50)", borderLeft: "2px solid var(--color-border)" }}>{monoSpan(s.spaceBelow)}</td>
                           </tr>);
                       })}
                       {shelves.length > 0 && (
-                        <tr style={{ background: "#fdfbf7", borderTop: "2px solid #e8e2d0" }}>
-                          <td style={{ padding: "7px 10px", fontWeight: 700, color: "#6a5a4a" }}>Legfelső polcköz</td>
+                        <tr style={{ background: "var(--color-neutral-50)", borderTop: "2px solid var(--color-border)" }}>
+                          <td style={{ padding: "7px 10px", fontWeight: 700, color: "var(--color-text-secondary)" }}>Legfelső polcköz</td>
                           <td colSpan={6} style={{ padding: "7px 10px", color: "#888", fontSize: 11 }}>A legfelső polc feletti szabad tér</td>
-                          <td style={{ padding: "7px 10px", fontWeight: 700, color: "#4a3a2a", background: "#fcfaf6", borderLeft: "2px solid #e8e2d0" }}>{monoSpan(shelves[shelves.length - 1].spaceAbove)}</td>
+                          <td style={{ padding: "7px 10px", fontWeight: 700, color: "var(--color-text-primary)", background: "var(--color-neutral-50)", borderLeft: "2px solid var(--color-border)" }}>{monoSpan(shelves[shelves.length - 1].spaceAbove)}</td>
                         </tr>
                       )}
                     </tbody>
