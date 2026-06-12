@@ -216,7 +216,7 @@
 
     const FONTS = `@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');`;
 
-    const VERSION = "1.3";
+    const VERSION = "1.4";
 
     const R = (n, dec = 1) => { const f = Math.pow(10, dec); return Math.round(n * f) / f; };
     const E = (o, t) => ({ o, t }); // Élzárás shorthand
@@ -232,18 +232,29 @@
     // ═══════════════════════════════════════════
     // SVG schematic icons for homepage
     // Squadra logó — derékszög-vonalzó ikon lekerekített badge-ben
-    function SquadraLogo({ size = 32, badge = "#1E3A8A", icon = "#E6F1FB" }) {
+    function SquadraLogo({ size = 32, badge = "#1E3A8A", icon = "#E6F1FB", tick }) {
+      const t = tick || (badge === "#1E3A8A" ? "#8fa8d8" : "#4a6bbf");
       return (
         <svg width={size} height={size} viewBox="0 0 48 48" style={{ display: "block", flexShrink: 0 }}>
           <rect width="48" height="48" rx="11" fill={badge} />
-          <path d="M15 9 h8 v22 h16 v8 H15 Z" fill={icon} />
-          <rect x="23" y="12" width="5" height="1.8" rx="0.9" fill={icon} />
-          <rect x="23" y="16" width="3.2" height="1.8" rx="0.9" fill={icon} />
-          <rect x="23" y="20" width="5" height="1.8" rx="0.9" fill={icon} />
-          <rect x="23" y="24" width="3.2" height="1.8" rx="0.9" fill={icon} />
-          <rect x="27" y="26" width="1.8" height="5" rx="0.9" fill={icon} />
-          <rect x="31" y="27.8" width="1.8" height="3.2" rx="0.9" fill={icon} />
-          <rect x="35" y="26" width="1.8" height="5" rx="0.9" fill={icon} />
+          <g transform="translate(9,9) scale(0.394)">
+            <rect x="0" y="0" width="20" height="76" rx="3" fill={icon} />
+            <rect x="0" y="56" width="76" height="20" rx="3" fill={icon} />
+            <g stroke={t} strokeWidth="2" strokeLinecap="round">
+              <line x1="20" y1="8" x2="13" y2="8" />
+              <line x1="20" y1="16" x2="16" y2="16" />
+              <line x1="20" y1="24" x2="13" y2="24" />
+              <line x1="20" y1="32" x2="16" y2="32" />
+              <line x1="20" y1="40" x2="13" y2="40" />
+              <line x1="20" y1="48" x2="16" y2="48" />
+              <line x1="28" y1="56" x2="28" y2="63" />
+              <line x1="36" y1="56" x2="36" y2="59" />
+              <line x1="44" y1="56" x2="44" y2="63" />
+              <line x1="52" y1="56" x2="52" y2="59" />
+              <line x1="60" y1="56" x2="60" y2="63" />
+              <line x1="68" y1="56" x2="68" y2="59" />
+            </g>
+          </g>
         </svg>
       );
     }
@@ -317,7 +328,7 @@
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <div style={{ display: "flex", justifyContent: "center", marginBottom: 18 }}><SquadraLogo size={64} /></div>
             <h1 style={{ fontSize: 30, fontWeight: 500, color: "var(--color-primary-700)", fontFamily: "var(--font-heading)", letterSpacing: ".3em", textIndent: ".3em", margin: 0 }}>SQUADRA</h1>
-            <p style={{ fontSize: 13, color: "var(--color-primary-400)", marginTop: 6, fontFamily: "var(--font-body)", letterSpacing: ".08em", fontWeight: 500 }}>Progettato al millimetro</p>
+            <p style={{ fontSize: 13, color: "var(--color-primary-400)", marginTop: 6, fontFamily: "var(--font-body)", letterSpacing: ".08em", fontWeight: 500 }}>Milliméterre tervezve</p>
             <p style={{ fontSize: 15, color: "var(--text-secondary)", marginTop: 16, fontFamily: "Inter, sans-serif" }}>Bútortervező Kalkulátor — válassz modult a tervezéshez</p>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
