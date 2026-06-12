@@ -5917,8 +5917,7 @@
                                   <line x1={px} y1={y_shelf} x2={x_dim} y2={y_shelf} stroke="#5B6472" strokeWidth={0.6} strokeDasharray="2,2" />
                                   <line x1={x_dim - 3} y1={y_shelf} x2={x_dim + 3} y2={y_shelf} stroke="#5B6472" strokeWidth={0.8} />
                                   {y_label !== y_shelf && <line x1={x_dim - 1} y1={y_shelf - 1} x2={x_dim - 1} y2={y_label + 5} stroke="#5B6472" strokeWidth={0.4} opacity={0.45} />}
-                                  <rect x={x_dim - 24} y={y_label - 5} width={19} height={10} fill="#fff" rx={1} opacity={0.9} />
-                                  <text x={x_dim - 6} y={y_label + 3} textAnchor="end" fontSize={8.5} fill="#5B6472" fontWeight="700" fontFamily="IBM Plex Mono">{val}</text>
+                                  <text x={x_dim - 6} y={y_label + 3} textAnchor="end" fontSize={8.5} fill="#5B6472" fontWeight="700" fontFamily="IBM Plex Mono" style={{paintOrder:"stroke",stroke:"#fff",strokeWidth:"2.5px",strokeLinejoin:"round"}}>{val}</text>
                                 </g>
                               );
                             })}
