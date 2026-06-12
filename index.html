@@ -5228,14 +5228,29 @@
                               <circle cx={hx2} cy={hy} r={4} fill="none" stroke="#0C447C" strokeWidth={1.5} />
                               <circle cx={hx2} cy={hy} r={1.5} fill="#111" />
 
-                              {/* Handle dims for this drawer */}
-                              <line x1={hx1} y1={hy - 12} x2={hx2} y2={hy - 12} stroke="#A32D2D" strokeWidth={.7} strokeDasharray="3,2" />
-                              <line x1={hx1} y1={hy - 16} x2={hx1} y2={hy - 8} stroke="#A32D2D" strokeWidth={.7} />
-                              <line x1={hx2} y1={hy - 16} x2={hx2} y2={hy - 8} stroke="#A32D2D" strokeWidth={.7} />
-                              <text x={(hx1 + hx2) / 2} y={hy - 14} textAnchor="middle" fontSize={7} fill="#A32D2D" fontWeight="700" fontFamily="IBM Plex Mono">{handlePitch}</text>
+                              {/* Fogantyú furattáv — piros, a fogantyú felett */}
+                              <line x1={hx1} y1={hy - 16} x2={hx2} y2={hy - 16} stroke="#A32D2D" strokeWidth={.7} strokeDasharray="3,2" />
+                              <line x1={hx1} y1={hy - 20} x2={hx1} y2={hy - 12} stroke="#A32D2D" strokeWidth={.7} />
+                              <line x1={hx2} y1={hy - 20} x2={hx2} y2={hy - 12} stroke="#A32D2D" strokeWidth={.7} />
+                              <text x={(hx1 + hx2) / 2} y={hy - 19} textAnchor="middle" fontSize={7} fill="#A32D2D" fontWeight="700" fontFamily="IBM Plex Mono">{handlePitch}</text>
 
-                              <line x1={(hx1 + hx2) / 2} y1={dy} x2={(hx1 + hx2) / 2} y2={hy} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" />
-                              <text x={(hx1 + hx2) / 2 + 4} y={(dy + hy) / 2 + 3} textAnchor="start" fontSize={7} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{getHandleMarginYForDrawer(i)}</text>
+                              {/* Tetejétől fogantyúig — kék, jobb oldali függőleges méretvonal */}
+                              <line x1={dx + dwa + 12} y1={dy} x2={dx + dwa + 12} y2={hy} stroke="#0C447C" strokeWidth={.7} />
+                              <line x1={dx + dwa + 8} y1={dy} x2={dx + dwa + 16} y2={dy} stroke="#0C447C" strokeWidth={.7} />
+                              <line x1={dx + dwa + 8} y1={hy} x2={dx + dwa + 16} y2={hy} stroke="#0C447C" strokeWidth={.7} />
+                              <text x={dx + dwa + 18} y={(dy + hy) / 2 + 3} textAnchor="start" fontSize={7} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{getHandleMarginYForDrawer(i)}</text>
+
+                              {/* Oldaléltől első furatig — kék, a fogantyú alatt */}
+                              {(() => {
+                                const fromEdge = Math.round((drawerW - handlePitch) / 2);
+                                const yD = hy + 18;
+                                return (<>
+                                  <line x1={dx} y1={yD} x2={hx1} y2={yD} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" />
+                                  <line x1={dx} y1={yD - 4} x2={dx} y2={yD + 4} stroke="#0C447C" strokeWidth={.7} />
+                                  <line x1={hx1} y1={yD - 4} x2={hx1} y2={yD + 4} stroke="#0C447C" strokeWidth={.7} />
+                                  <text x={(dx + hx1) / 2} y={yD + 9} textAnchor="middle" fontSize={7} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{fromEdge}</text>
+                                </>);
+                              })()}
                             </g>
                           );
                         })}
@@ -5881,19 +5896,29 @@
                       {shelves.length > 0 && (() => {
                         const x_dim = 24;
                         const y_start = vizRef === "panel" ? toY(0) : toY(t);
+                        // Label collision avoidance: ha két felirat közelebb lenne 12px-nél, feljebb toljuk
+                        const MIN_GAP = 12;
+                        const rawYs = shelves.map(s => toY(s.panelBot));
+                        const adjYs = rawYs.slice();
+                        for (let i = 1; i < adjYs.length; i++) {
+                          if (adjYs[i - 1] - adjYs[i] < MIN_GAP) adjYs[i] = adjYs[i - 1] - MIN_GAP;
+                        }
                         return (
                           <g>
                             <line x1={x_dim} y1={y_start} x2={x_dim} y2={toY(shelves[shelves.length - 1].panelBot)} stroke="#5B6472" strokeWidth={0.8} />
                             <line x1={x_dim - 3} y1={y_start} x2={x_dim + 3} y2={y_start} stroke="#5B6472" strokeWidth={0.8} />
                             <text x={x_dim - 5} y={y_start + 3} textAnchor="end" fontSize={8} fill="#5B6472" fontWeight="700" fontFamily="IBM Plex Mono">0</text>
-                            {shelves.map(s => {
-                              const y_shelf = toY(s.panelBot);
+                            {shelves.map((s, i) => {
+                              const y_shelf = rawYs[i];
+                              const y_label = adjYs[i];
                               const val = vizRef === "panel" ? s.panelBot : s.intBot;
                               return (
                                 <g key={`shelf-dim-${s.idx}`}>
                                   <line x1={px} y1={y_shelf} x2={x_dim} y2={y_shelf} stroke="#5B6472" strokeWidth={0.6} strokeDasharray="2,2" />
                                   <line x1={x_dim - 3} y1={y_shelf} x2={x_dim + 3} y2={y_shelf} stroke="#5B6472" strokeWidth={0.8} />
-                                  <text x={x_dim - 5} y={y_shelf + 3} textAnchor="end" fontSize={8.5} fill="#5B6472" fontWeight="700" fontFamily="IBM Plex Mono">{val}</text>
+                                  {y_label !== y_shelf && <line x1={x_dim - 1} y1={y_shelf - 1} x2={x_dim - 1} y2={y_label + 5} stroke="#5B6472" strokeWidth={0.4} opacity={0.45} />}
+                                  <rect x={x_dim - 24} y={y_label - 5} width={19} height={10} fill="#fff" rx={1} opacity={0.9} />
+                                  <text x={x_dim - 6} y={y_label + 3} textAnchor="end" fontSize={8.5} fill="#5B6472" fontWeight="700" fontFamily="IBM Plex Mono">{val}</text>
                                 </g>
                               );
                             })}
