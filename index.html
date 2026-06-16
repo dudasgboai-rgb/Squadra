@@ -5350,6 +5350,12 @@
                   const cSkirt = "#185FA5"; const cFloor = "#B5D4F4";
                   const cPers  = "#E6F1FB"; const cStr   = "#042C53";
                   const cDim   = "#042C53"; const cDimSk = "#185FA5";
+                  // Perspektíva felület-árnyalatok (tájolás szerint): tető világosabb, oldal sötétebb, belső közepes
+                  const cpTop   = "#D6E8FA"; // tetőélek (felfelé néző lapok)
+                  const cpSideO = "#9DC6F0"; // jobb oldallap külső face
+                  const cpFront = "#B5D4F4"; // elülső lapok (előlap + oldallapok eleje)
+                  const cpInner = "#C7DCF1"; // belső falak (belátszó)
+                  const cpFloor = "#CFE2F4"; // fenéklap teteje (belátszó)
 
                   // Quadrant areas [x0, y0, w, h]
                   const TL = [0, 0, divX, divY];
@@ -5503,73 +5509,50 @@
                         {dimH(blx(0), blx(tBt), bly(dD), `${tBt}`, false, cDim)}
 
                         {/* ══════ PERSPEKTÍVA ══════ */}
-                        {/* ══ PERSPEKTÍVA — painter's order: hátul → elöl ══ */}
+                        {/* Nyitott fiókdoboz ferde (oblique) vetülete — csak a LÁTSZÓ lapok.
+                           Nincs metszet-sávozás, nincs rejtett él / szaggatott jelölés.
+                           Painter's order: belső (hátul) → tetőélek → külső (elöl). */}
 
+                        {/* ── BELSŐ (nyitott tetőn át belátszó) ── */}
+                        {/* Hátfal belső face (d=dD-tBt, befelé néz) */}
+                        <polygon points={`${brP(tBt,sk,dD-tBt)} ${brP(dW-tBt,sk,dD-tBt)} ${brP(dW-tBt,sH,dD-tBt)} ${brP(tBt,sH,dD-tBt)}`}
+                          fill={cpInner} stroke={cStr} strokeWidth={0.7} />
+                        {/* Bal oldallap belső face (x=tBt) — a kamera felé néző belső fal */}
+                        <polygon points={`${brP(tBt,sk,tBt)} ${brP(tBt,sk,dD-tBt)} ${brP(tBt,sH,dD-tBt)} ${brP(tBt,sH,tBt)}`}
+                          fill={cpInner} stroke={cStr} strokeWidth={0.6} />
+                        {/* (Jobb oldalfal belső lapja a kamerától elfordul → takarásban, nem rajzoljuk) */}
+                        {/* Fenéklap felső lapja (belátszó padló, y=sk+tBt) */}
+                        <polygon points={`${brP(tBt,sk+tBt,tBt)} ${brP(dW-tBt,sk+tBt,tBt)} ${brP(dW-tBt,sk+tBt,dD-tBt)} ${brP(tBt,sk+tBt,dD-tBt)}`}
+                          fill={cpFloor} stroke={cStr} strokeWidth={0.6} />
 
-                        {/* HÁTLAP látható face (d=dD, oldallapok között, sk..sH) — TÖMÖR, nem csíkos */}
-                        <polygon points={`${brP(tBt,sk,dD)} ${brP(dW-tBt,sk,dD)} ${brP(dW-tBt,sH,dD)} ${brP(tBt,sH,dD)}`}
-                          fill={cFront} stroke={cStr} strokeWidth={0.7} />
-
-                        {/* JOBB OLDALLAP KÜLSŐ FACE (x=dW) — mint az Oldalnézet */}
-                        {/* Alap: teljes oldallap */}
-                        <polygon points={`${brP(dW,0,0)} ${brP(dW,0,dD)} ${brP(dW,sH,dD)} ${brP(dW,sH,0)}`}
-                          fill={cSide} stroke={cStr} strokeWidth={0.8} />
-                        {/* Előlap metszete (d=0..tBt, sk..sH): cFront + ehHatch4 */}
-                        <polygon points={`${brP(dW,sk,0)} ${brP(dW,sk,tBt)} ${brP(dW,sH,tBt)} ${brP(dW,sH,0)}`}
-                          fill={cFront} stroke={cStr} strokeWidth={0.5} />
-                        <polygon points={`${brP(dW,sk,0)} ${brP(dW,sk,tBt)} ${brP(dW,sH,tBt)} ${brP(dW,sH,0)}`}
-                          fill="url(#ehHatch4)" />
-                        {/* Hátlap metszete (d=dD-tBt..dD, sk..sH): cFront + ehHatch4 */}
-                        <polygon points={`${brP(dW,sk,dD-tBt)} ${brP(dW,sk,dD)} ${brP(dW,sH,dD)} ${brP(dW,sH,dD-tBt)}`}
-                          fill={cFront} stroke={cStr} strokeWidth={0.5} />
-                        <polygon points={`${brP(dW,sk,dD-tBt)} ${brP(dW,sk,dD)} ${brP(dW,sH,dD)} ${brP(dW,sH,dD-tBt)}`}
-                          fill="url(#ehHatch4)" />
-                        {/* Fenéklap metszete (d=tBt..dD-tBt, y=sk..sk+tBt): cFloor + szHatch4 */}
-                        <polygon points={`${brP(dW,sk,tBt)} ${brP(dW,sk,dD-tBt)} ${brP(dW,sk+tBt,dD-tBt)} ${brP(dW,sk+tBt,tBt)}`}
-                          fill={cFloor} stroke={cStr} strokeWidth={0.5} />
-                        <polygon points={`${brP(dW,sk,tBt)} ${brP(dW,sk,dD-tBt)} ${brP(dW,sk+tBt,dD-tBt)} ${brP(dW,sk+tBt,tBt)}`}
-                          fill="url(#szHatch4)" />
-                        {/* Szoknya zóna csíkozás (y=0..sk) */}
-                        <polygon points={`${brP(dW,0,0)} ${brP(dW,0,dD)} ${brP(dW,sk,dD)} ${brP(dW,sk,0)}`}
-                          fill="url(#szHatch4)" />
-                        {/* Szoknya határvonal */}
-                        <line x1={brSX(dW,0)} y1={brSY(sk,0)} x2={brSX(dW,dD)} y2={brSY(sk,dD)}
-                          stroke={cDimSk} strokeWidth={0.8} strokeDasharray="4,2" />
-
-                        {/* FEDŐLAPOK (y=sH sík) */}
+                        {/* ── TETŐÉLEK (y=sH sík, felfelé néző lapvégek) ── */}
+                        {/* Bal oldallap teteje */}
                         <polygon points={`${brP(0,sH,0)} ${brP(tBt,sH,0)} ${brP(tBt,sH,dD)} ${brP(0,sH,dD)}`}
-                          fill={cSide} stroke={cStr} strokeWidth={0.6} />
+                          fill={cpTop} stroke={cStr} strokeWidth={0.6} />
+                        {/* Előlap teteje */}
                         <polygon points={`${brP(tBt,sH,0)} ${brP(dW-tBt,sH,0)} ${brP(dW-tBt,sH,tBt)} ${brP(tBt,sH,tBt)}`}
-                          fill={cFront} stroke={cStr} strokeWidth={0.6} />
+                          fill={cpTop} stroke={cStr} strokeWidth={0.6} />
+                        {/* Hátlap teteje */}
                         <polygon points={`${brP(tBt,sH,dD-tBt)} ${brP(dW-tBt,sH,dD-tBt)} ${brP(dW-tBt,sH,dD)} ${brP(tBt,sH,dD)}`}
-                          fill={cFront} stroke={cStr} strokeWidth={0.6} />
+                          fill={cpTop} stroke={cStr} strokeWidth={0.6} />
+                        {/* Jobb oldallap teteje */}
                         <polygon points={`${brP(dW-tBt,sH,0)} ${brP(dW,sH,0)} ${brP(dW,sH,dD)} ${brP(dW-tBt,sH,dD)}`}
-                          fill={cSide} stroke={cStr} strokeWidth={0.6} />
+                          fill={cpTop} stroke={cStr} strokeWidth={0.6} />
 
-                        {/* FENÉKLAP felső lapja (belül, y=sk, csíkos) */}
-                        <polygon points={`${brP(tBt,sk,tBt)} ${brP(dW-tBt,sk,tBt)} ${brP(dW-tBt,sk,dD-tBt)} ${brP(tBt,sk,dD-tBt)}`}
-                          fill={cFloor} stroke={cStr} strokeWidth={0.6} />
-                        <polygon points={`${brP(tBt,sk,tBt)} ${brP(dW-tBt,sk,tBt)} ${brP(dW-tBt,sk,dD-tBt)} ${brP(tBt,sk,dD-tBt)}`}
-                          fill="url(#szHatch4)" opacity={0.45} />
+                        {/* ── JOBB OLDALLAP KÜLSŐ FACE (x=dW, látszó oldal) ── */}
+                        <polygon points={`${brP(dW,0,0)} ${brP(dW,0,dD)} ${brP(dW,sH,dD)} ${brP(dW,sH,0)}`}
+                          fill={cpSideO} stroke={cStr} strokeWidth={0.8} />
 
-                        {/* FRONT FACE — mint az Elölnézet */}
-                        {/* Bal oldallap sáv (x=0..tBt, y=0..sH) — tömör */}
+                        {/* ── ELÜLSŐ LAPOK (d=0 sík) ── */}
+                        {/* Bal oldallap eleje (x=0..tBt, teljes magasság) */}
                         <polygon points={`${brP(0,0,0)} ${brP(tBt,0,0)} ${brP(tBt,sH,0)} ${brP(0,sH,0)}`}
-                          fill={cSide} stroke={cStr} strokeWidth={0.8} />
-                        {/* Előlap face (tBt..dW-tBt, sk..sH) — tömör */}
-                        <polygon points={`${brP(tBt,sk,0)} ${brP(dW-tBt,sk,0)} ${brP(dW-tBt,sH,0)} ${brP(tBt,sH,0)}`}
-                          fill={cFront} stroke={cStr} strokeWidth={0.9} />
-                        {/* Fenéklap keresztmetszet az elöl-síkon (tBt..dW-tBt, sk..sk+tBt) — csíkos */}
-                        <polygon points={`${brP(tBt,sk,0)} ${brP(dW-tBt,sk,0)} ${brP(dW-tBt,sk+tBt,0)} ${brP(tBt,sk+tBt,0)}`}
-                          fill={cFloor} stroke={cStr} strokeWidth={0.5} />
-                        <polygon points={`${brP(tBt,sk,0)} ${brP(dW-tBt,sk,0)} ${brP(dW-tBt,sk+tBt,0)} ${brP(tBt,sk+tBt,0)}`}
-                          fill="url(#szHatch4)" />
-                        {/* Szoknya határvonal az elöl-síkon */}
-                        <line x1={brSX(tBt,0)} y1={brSY(sk,0)} x2={brSX(dW-tBt,0)} y2={brSY(sk,0)}
-                          stroke={cDimSk} strokeWidth={0.9} strokeDasharray="4,2" />
-                        {/* Jobb oldallap sáv (dW-tBt..dW, y=0..sH) — tömör */}
+                          fill={cpFront} stroke={cStr} strokeWidth={0.8} />
+                        {/* Jobb oldallap eleje (x=dW-tBt..dW, teljes magasság) */}
                         <polygon points={`${brP(dW-tBt,0,0)} ${brP(dW,0,0)} ${brP(dW,sH,0)} ${brP(dW-tBt,sH,0)}`}
-                          fill={cSide} stroke={cStr} strokeWidth={0.8} />
+                          fill={cpFront} stroke={cStr} strokeWidth={0.8} />
+                        {/* Előlap face (oldallapok között, szoknya felett: sk..sH) */}
+                        <polygon points={`${brP(tBt,sk,0)} ${brP(dW-tBt,sk,0)} ${brP(dW-tBt,sH,0)} ${brP(tBt,sH,0)}`}
+                          fill={cpFront} stroke={cStr} strokeWidth={0.9} />
 
                         {/* MÉRETVONALAK */}
                         {(() => { const dy = brSY(sH,0)-10; return (<g>
