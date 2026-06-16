@@ -112,6 +112,12 @@
     db.enablePersistence().catch(() => {});
     let currentUser = null;
 
+    const ALLOWED_EMAILS = [
+      "dudasgbo@gmail.com",
+      // ide vehetsz fel más e-mail címeket:
+      // "valaki@gmail.com",
+    ];
+
     const saveToFirestore = (() => {
       const timers = {};
       return (lsKey, value) => {
@@ -6670,7 +6676,12 @@
         setLoading(true); setError(null);
         try {
           const provider = new firebase.auth.GoogleAuthProvider();
-          await auth.signInWithPopup(provider);
+          const result = await auth.signInWithPopup(provider);
+          if (!ALLOWED_EMAILS.includes(result.user.email)) {
+            await auth.signOut();
+            setError("Ez a Google-fiók nem jogosult a hozzáférésre.");
+            setLoading(false);
+          }
         } catch(e) {
           setError("Bejelentkezés sikertelen. Próbáld újra.");
           setLoading(false);
@@ -6712,6 +6723,10 @@
       useEffect(() => {
         return auth.onAuthStateChanged(async (u) => {
           if (u) {
+            if (!ALLOWED_EMAILS.includes(u.email)) {
+              await auth.signOut();
+              return;
+            }
             currentUser = u;
             setAuthState('syncing');
             try { await syncFromFirestore(u.uid); } catch(e) {}
