@@ -2515,6 +2515,576 @@
     }
 
     // ═══════════════════════════════════════════
+    // SINK 1-DOOR CABINET CALCULATOR
+    // ═══════════════════════════════════════════
+    function Sink1DoorCalc({ params, boardColors, edgeBandOptions, partDefaults, onBack }) {
+      const [W, setW] = usePersistentState("Sink1DoorCalc", "W", 600);
+      const [customH, setCustomH] = usePersistentState("Sink1DoorCalc", "customH", null);
+      const [braceFrontH, setBraceFrontH] = usePersistentState("Sink1DoorCalc", "braceFrontH", 80);
+      const [braceBackH, setBraceBackH] = usePersistentState("Sink1DoorCalc", "braceBackH", 100);
+      const [braceBottomH, setBraceBottomH] = usePersistentState("Sink1DoorCalc", "braceBottomH", 150);
+      const [bottomPos, setBottomPos] = usePersistentState("Sink1DoorCalc", "bottomPos", "between");
+      const [doorGapTop, setDoorGapTop] = usePersistentState("Sink1DoorCalc", "doorGapTop", params.lowerDoorGapTop);
+      const [doorGapBottom, setDoorGapBottom] = usePersistentState("Sink1DoorCalc", "doorGapBottom", params.lowerDoorGapBottom);
+      const [doorGapSide, setDoorGapSide] = usePersistentState("Sink1DoorCalc", "doorGapSide", params.lowerDoorGapSide);
+      const [splitSides, setSplitSides] = usePersistentState("Sink1DoorCalc", "splitSides", false);
+      const [swappedParts, setSwappedParts] = usePersistentState("Sink1DoorCalc", "swappedParts", {});
+      const [handlePitch, setHandlePitch] = usePersistentState("Sink1DoorCalc", "handlePitch", params.handlePitch);
+      const [handleOrient, setHandleOrient] = usePersistentState("Sink1DoorCalc", "handleOrient", params.handleOrient);
+      const [handleCenter, setHandleCenter] = usePersistentState("Sink1DoorCalc", "handleCenter", params.handleCenter);
+      const [doorHanding, setDoorHanding] = usePersistentState("Sink1DoorCalc", "doorHanding", "left");
+      const [handleMarginX, setHandleMarginX] = usePersistentState("Sink1DoorCalc", "handleMarginX", params.handleMarginX);
+      const [handleMarginY, setHandleMarginY] = usePersistentState("Sink1DoorCalc", "handleMarginY", params.handleMarginY);
+      const [hingeMargin, setHingeMargin] = usePersistentState("Sink1DoorCalc", "hingeMargin", params.hingeMargin);
+      const [doorMaterial, setDoorMaterial] = usePersistentState("Sink1DoorCalc", "doorMaterial", "butorlap");
+      const [mdfThickness, setMdfThickness] = usePersistentState("Sink1DoorCalc", "mdfThickness", 18);
+
+      const bt = params.boardThickness;
+      const autoTotalCabinetH = params.counterHeight - params.countertopThickness;
+      const totalCabinetH = customH !== null ? customH : autoTotalCabinetH;
+      const corpusFrameH = totalCabinetH - params.plinthHeight;
+
+      let sideH = corpusFrameH;
+      if (bottomPos === "under") sideH -= bt;
+
+      const internalW = W - 2 * bt;
+      let internalH = sideH;
+      if (bottomPos === "between") internalH -= bt;
+
+      const doorH = corpusFrameH - doorGapTop - doorGapBottom;
+      const doorW = W - 2 * doorGapSide;
+      const bottomPanelL = bottomPos === "between" ? internalW : W;
+
+      const BOARD_KG_PER_M2 = doorMaterial === "mdf" ? (mdfThickness * 0.7) : 11.8;
+      const doorAreaM2 = (doorH / 1000) * (doorW / 1000);
+      const doorWeightKg = R(doorAreaM2 * BOARD_KG_PER_M2, 2);
+      const hingesByHeight = doorH <= 900 ? 2 : doorH <= 1600 ? 3 : doorH <= 2000 ? 4 : Math.max(2, Math.ceil(doorH / 500));
+      const hingesByWeight = doorWeightKg <= 6 ? 2 : doorWeightKg <= 12 ? 3 : doorWeightKg <= 17 ? 4 : doorWeightKg <= 22 ? 5 : Math.max(2, Math.ceil(doorWeightKg / 5));
+      const hingeCount = Math.max(hingesByHeight, hingesByWeight);
+
+      const getDef = (id) => partDefaults.find(p => p.id === id) || { colorIdx: 0, edges: [e04, null, null, null] };
+      const sideDef = getDef("lower_side");
+      const bottomDef = getDef("lower_bottom");
+      const braceFDef = getDef("lower_brace_f");
+      const braceBDef = getDef("lower_brace_b");
+      const doorDef = getDef("lower_door");
+
+      const sideNote = () => bottomPos === "under" ? "Lent rááll" : "";
+
+      const defaultParts = [
+        ...(splitSides ? [
+          { id: "side_l", name: "Oldallap (bal)", qty: 1, l: sideH, w: params.lowerDepth, t: bt, note: sideNote(), colorIdx: sideDef.colorIdx, edges: [...sideDef.edges] },
+          { id: "side_r", name: "Oldallap (jobb)", qty: 1, l: sideH, w: params.lowerDepth, t: bt, note: sideNote(), colorIdx: sideDef.colorIdx, edges: [...sideDef.edges] },
+        ] : [
+          { id: "side", name: "Oldallap", qty: 2, l: sideH, w: params.lowerDepth, t: bt, note: sideNote(), colorIdx: sideDef.colorIdx, edges: [...sideDef.edges] },
+        ]),
+        { id: "bottom", name: "Fenéklap", qty: 1, l: bottomPanelL, w: params.lowerDepth, t: bt, note: bottomPos === "between" ? "Oldalfalak között" : "Oldalfalak alatt", colorIdx: bottomDef.colorIdx, edges: bottomPos === "between" ? [...bottomDef.edges] : [bottomDef.edges[0], bottomDef.edges[1], bottomDef.edges[0] || e04, bottomDef.edges[3]] },
+        { id: "brace_f", name: "Átkötő elöl (függőleges)", qty: 1, l: internalW, w: braceFrontH, t: bt, note: "Felül elöl, függőlegesen", colorIdx: braceFDef.colorIdx, edges: [...braceFDef.edges] },
+        { id: "brace_b", name: "Átkötő hátul (függőleges)", qty: 1, l: internalW, w: braceBackH, t: bt, note: "Felül hátul, alja élzárva 0.4", colorIdx: braceBDef.colorIdx, edges: [null, { o: 0, t: 0 }, null, null] },
+        { id: "brace_bot", name: "Átkötő alul (függőleges)", qty: 1, l: internalW, w: braceBottomH, t: bt, note: "Fenéklap felett, teteje élzárva 0.4", colorIdx: braceBDef.colorIdx, edges: [{ o: 0, t: 0 }, null, null, null] },
+        { id: "door", name: "Ajtólap", qty: 1, l: doorH, w: doorW, t: bt, note: R(doorWeightKg, 1) + " kg — Blum " + hingeCount + " pár pánt", colorIdx: doorDef.colorIdx, edges: [...doorDef.edges] },
+      ];
+
+      const toggleSwap = (id) => setSwappedParts(prev => ({ ...prev, [id]: !prev[id] }));
+      const getDisplayDims = (p) => { const swapped = swappedParts[p.id]; return swapped ? { l: p.w, w: p.l } : { l: p.l, w: p.w }; };
+      const [partOverrides, setPartOverrides] = usePersistentState("Sink1DoorCalc", "partOverrides", {});
+      const getPart = (p) => { const ov = partOverrides[p.id] || {}; return { ...p, colorIdx: ov.colorIdx !== undefined ? ov.colorIdx : p.colorIdx, edges: ov.edges || p.edges }; };
+      const setPartOverride = (id, key, val) => setPartOverrides(prev => ({ ...prev, [id]: { ...prev[id], [key]: val } }));
+      const parts = defaultParts.map(getPart);
+
+      const thickLabels = ["0.4", "2"];
+      const edgeBg = (e) => { if (!e) return "#D7DCE3"; const colors = ["#b8d0e8", "#9FE1CB"]; return colors[e.o] || "#ddd"; };
+      const cycleEdgeColor = (e) => { if (!e) return { o: 0, t: edgeBandOptions[0]?.defT || 0 }; if (e.o < edgeBandOptions.length - 1) return { ...e, o: e.o + 1 }; return null; };
+      const toggleEdgeThick = (e) => { if (!e) return { o: 0, t: 1 }; return { ...e, t: e.t === 0 ? 1 : 0 }; };
+
+      const SVW = 370, SVH = 480;
+      const padL = 80, padR = 80, padT = 36, padB = 40;
+      const drawW = SVW - padL - padR; const drawH = SVH - padT - padB;
+      const scX = drawW / W; const scY = drawH / (corpusFrameH + params.plinthHeight);
+      const sc = Math.min(scX, scY);
+      const cw = W * sc; const ch = (corpusFrameH + params.plinthHeight) * sc;
+      const cx = padL + (drawW - cw) / 2; const cy = padT + (drawH - ch) / 2;
+      const yFromBot = (mm) => cy + ch - mm * sc;
+      const cabinetTopY = cy; const cabinetBotY = cy + ch;
+      const plinthTopY = cabinetBotY - params.plinthHeight * sc;
+      const sideTopY = cabinetTopY;
+      const sideBotY = bottomPos === "under" ? plinthTopY - bt * sc : plinthTopY;
+      const sideDrawH = sideBotY - sideTopY;
+
+      return (
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: 16 }}>
+          <button onClick={onBack} style={{ padding: "6px 16px", borderRadius: 8, background: "rgba(0,0,0,.04)", border: "1.5px solid var(--color-border)", color: "var(--color-text-secondary)", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "Inter, sans-serif", marginBottom: 16 }}>{"←"} Vissza a szekrénytípusokhoz</button>
+          <div style={{ display: "grid", gridTemplateColumns: "340px 1fr", gap: 20, alignItems: "start" }}>
+            <div>
+              <div style={cardStyle}>
+                <div style={{ fontWeight: 800, fontSize: 14, color: "var(--color-primary-700)", marginBottom: 12 }}>{"🚰"} 1 ajtós mosogatós szekrény</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
+                    Szekrény szélessége
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <input type="number" value={W} min={200} onChange={e => setW(e.target.value === "" ? "" : +e.target.value)} style={{ ...inputStyle, fontSize: 14 }} />
+                      <span style={{ fontSize: 11, color: "#888", fontWeight: 600 }}>mm</span>
+                    </div>
+                    <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                      {[450, 600, 800, 900, 1200].map(w => (<button key={w} onClick={e => { e.preventDefault(); setW(w); }} style={{ padding: "2px 8px", borderRadius: 5, fontSize: 11, cursor: "pointer", background: W === w ? "#1E3A8A" : "#EEF1F5", color: W === w ? "#fff" : "#5B6472", border: W === w ? "1.5px solid #1E3A8A" : "1.5px solid #A6AEBA", fontWeight: 700, fontFamily: "IBM Plex Mono, monospace", transition: "all .15s" }}>{w}</button>))}
+                    </div>
+                  </label>
+                  <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span>Szekrény magassága (lábazattal)</span>
+                      {customH !== null && (<button onClick={() => setCustomH(null)} style={{ fontSize: 9, padding: "1px 6px", borderRadius: 5, cursor: "pointer", background: "var(--color-neutral-100)", border: "1px solid var(--color-border)", color: "var(--color-text-secondary)", fontWeight: 700 }}>{"↩"} Auto ({autoTotalCabinetH} mm)</button>)}
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <input type="number" value={customH !== null ? customH : autoTotalCabinetH} min={100} onChange={e => setCustomH(e.target.value === "" ? "" : +e.target.value)} style={{ ...inputStyle, fontSize: 14, borderColor: customH !== null ? AMB : "#ddd" }} />
+                      <span style={{ fontSize: 11, color: "#888", fontWeight: 600 }}>mm</span>
+                    </div>
+                    {customH === null && <span style={{ fontSize: 9, color: "#aaa" }}>Számított: {autoTotalCabinetH} mm (módosítható)</span>}
+                  </label>
+                  {[
+                    { label: "Felső átkötő (elöl) magassága", val: braceFrontH, set: setBraceFrontH, min: 30, unit: "mm" },
+                    { label: "Felső átkötő (hátul) magassága", val: braceBackH, set: setBraceBackH, min: 30, unit: "mm" },
+                    { label: "Alsó átkötő magassága", val: braceBottomH, set: setBraceBottomH, min: 30, unit: "mm" },
+                  ].map(f => (
+                    <label key={f.label} style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
+                      {f.label}
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <input type="number" value={f.val} min={f.min} onChange={e => f.set(e.target.value === "" ? "" : +e.target.value)} style={{ ...inputStyle, fontSize: 14 }} />
+                        <span style={{ fontSize: 11, color: "#888", fontWeight: 600 }}>{f.unit}</span>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+                <div style={{ marginTop: 14 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 8, textTransform: "uppercase", letterSpacing: ".05em" }}>Ajtó rések</div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6 }}>
+                    {[{ label: "Alul", val: doorGapBottom, set: setDoorGapBottom }, { label: "Felül", val: doorGapTop, set: setDoorGapTop }, { label: "Oldalt", val: doorGapSide, set: setDoorGapSide }].map(f => (
+                      <label key={f.label} style={{ display: "flex", flexDirection: "column", gap: 2, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>{f.label}<div style={{ display: "flex", alignItems: "center", gap: 4 }}><input type="number" value={f.val} min={0} onChange={e => f.set(e.target.value === "" ? "" : +e.target.value)} style={{ ...inputStyle, fontSize: 13, padding: "4px 6px" }} /><span style={{ fontSize: 10, color: "#aaa" }}>mm</span></div></label>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ marginTop: 14 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 8, textTransform: "uppercase", letterSpacing: ".05em" }}>Fenéklap pozíciója</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    {[
+                      { id: "between", label: "Oldalfalak között", svg: <svg width="36" height="22" viewBox="0 0 36 22" fill="currentColor" style={{flexShrink:0,marginTop:2}}><rect x="0" y="0" width="5" height="22"/><rect x="31" y="0" width="5" height="22"/><rect x="6" y="16" width="24" height="5"/></svg>, desc: "Fenéklap a két oldallap közé kerül" },
+                      { id: "under", label: "Oldalfalak alatt", svg: <svg width="36" height="22" viewBox="0 0 36 22" fill="currentColor" style={{flexShrink:0,marginTop:2}}><rect x="0" y="0" width="5" height="15"/><rect x="31" y="0" width="5" height="15"/><rect x="0" y="16" width="36" height="6"/></svg>, desc: "Fenéklap az oldallapok alatt, azok ráállnak" },
+                    ].map(opt => (
+                      <button key={opt.id} onClick={() => setBottomPos(opt.id)} style={{ padding: "8px 12px", borderRadius: 8, fontSize: 12, cursor: "pointer", background: bottomPos === opt.id ? "#1E3A8A" : "#EEF1F5", color: bottomPos === opt.id ? "#fff" : "#5B6472", border: bottomPos === opt.id ? "2px solid #1E3A8A" : "2px solid #D7DCE3", fontWeight: 700, fontFamily: "Inter, sans-serif", textAlign: "left", transition: "all .15s", display: "flex", alignItems: "flex-start", gap: 10 }}>
+                        {opt.svg}<div>{opt.label}<div style={{ fontSize: 10, fontWeight: 400, opacity: .7, marginTop: 2 }}>{opt.desc}</div></div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ marginTop: 14 }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
+                    <div onClick={() => setSplitSides(s => !s)} style={{ width: 36, height: 20, borderRadius: 10, background: splitSides ? "#1E3A8A" : "#D7DCE3", position: "relative", cursor: "pointer", transition: "all .2s" }}>
+                      <div style={{ width: 16, height: 16, borderRadius: 8, background: "#fff", position: "absolute", top: 2, left: splitSides ? 18 : 2, transition: "all .2s", boxShadow: "0 1px 3px rgba(0,0,0,.2)" }} />
+                    </div>
+                    Különböző oldallapok (bal/jobb)
+                  </label>
+                </div>
+                <div style={{ marginTop: 16, background: "#E6F1FB", borderRadius: 8, padding: 12, border: "1px solid #B5D4F4" }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "var(--color-primary-700)", textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 8 }}>Számított méretek</div>
+                  {[["Oldallap H", sideH + " mm"], ["Belső szél.", internalW + " mm"], ["Fenéklap sz.", bottomPanelL + " mm"], ["Átkötő (elöl)", internalW + " × " + braceFrontH + " mm"], ["Átkötő (hátul)", internalW + " × " + braceBackH + " mm"], ["Átkötő (alul)", internalW + " × " + braceBottomH + " mm"], ["Ajtó", doorW + " × " + doorH + " mm"]].map(([l, v]) => (
+                    <div key={l} style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 4 }}>
+                      <span style={{ color: "#5B6472" }}>{l}:</span>
+                      <span style={{ fontFamily: "IBM Plex Mono, monospace", fontWeight: 700, color: "var(--text)" }}>{v}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div style={cardStyle}>
+                <div style={{ fontWeight: 800, fontSize: 14, color: "var(--color-primary-700)", marginBottom: 12 }}>{"📋"} Alkatrészlista</div>
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                    <thead>
+                      <tr>{["Alkatrész", "db", "H × Sz (mm)  ⇄", "Vtg.", "Szín", "Élek (H1·H2·Sz1·Sz2)", "Megj."].map((h, i) => (<th key={i} style={{ padding: "7px 6px", textAlign: "left", fontSize: 9, fontWeight: 700, background: "var(--color-primary-700)", color: "#fff", textTransform: "uppercase", letterSpacing: ".03em", whiteSpace: "nowrap", borderRight: "1px solid rgba(255,255,255,.1)" }}>{h}</th>))}</tr>
+                    </thead>
+                    <tbody>
+                      {parts.map((p, i) => {
+                        const dims = getDisplayDims(p); const isSwapped = !!swappedParts[p.id];
+                        return (
+                          <tr key={i} style={{ background: i % 2 ? "#F7F8FA" : "#fff", height: 32 }}>
+                            <td style={{ padding: "6px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap" }}>{p.name}</td>
+                            <td style={{ padding: "6px", textAlign: "center", whiteSpace: "nowrap" }}>{monoSpan(p.qty)}</td>
+                            <td style={{ padding: "6px", whiteSpace: "nowrap" }}><div style={{ display: "flex", alignItems: "center", gap: 3 }}>{monoSpan(dims.l)}<span style={{ fontSize: 10, color: "#aaa" }}>×</span>{monoSpan(dims.w)}<button onClick={() => toggleSwap(p.id)} title="Szálirány megfordítása" style={{ marginLeft: 2, padding: "1px 5px", borderRadius: 4, cursor: "pointer", fontSize: 10, fontWeight: 700, lineHeight: 1, background: isSwapped ? "#e8f0ff" : "#f0f0f0", border: isSwapped ? "1.5px solid #378ADD" : "1px solid #ccc", color: isSwapped ? "#378ADD" : "#888" }}>{"⇄"}</button></div></td>
+                            <td style={{ padding: "6px", whiteSpace: "nowrap" }}>{monoSpan(p.t)}</td>
+                            <td style={{ padding: "6px", whiteSpace: "nowrap" }}><div onClick={() => { const next = ((p.colorIdx || 0) + 1) % boardColors.length; setPartOverride(p.id, "colorIdx", next); }} style={{ display: "flex", alignItems: "center", gap: 4, cursor: "pointer", userSelect: "none" }} title="Kattints a szín váltáshoz"><div style={{ width: 14, height: 14, borderRadius: 3, background: boardColors[p.colorIdx]?.hex || "#ccc", border: "1.5px solid #888", flexShrink: 0 }} /><span style={{ fontSize: 10, color: "#666" }}>{boardColors[p.colorIdx]?.name || "?"}</span></div></td>
+                            <td style={{ padding: "6px" }}><div style={{ display: "flex", gap: 2 }}>{["H1","H2","Sz1","Sz2"].map((lbl, ei) => { const ev = p.edges[ei]; return (<div key={lbl} onClick={() => { const ne = [...p.edges]; ne[ei] = cycleEdgeColor(ev); setPartOverride(p.id, "edges", ne); }} onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); const ne = [...p.edges]; ne[ei] = toggleEdgeThick(ev); setPartOverride(p.id, "edges", ne); }} title={lbl + ": bal klikk=szín, jobb klikk=vastagság"} style={{ width: 28, height: 20, borderRadius: 3, cursor: "pointer", userSelect: "none", background: edgeBg(ev), border: ev ? "1.5px solid #888" : "1px solid #D7DCE3", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 7, fontWeight: 700, color: ev ? "#333" : "#bbb", transition: "all .1s" }}>{ev ? thickLabels[ev.t] : "—"}</div>); })}</div></td>
+                            <td style={{ padding: "6px", fontSize: 10, color: "#888", whiteSpace: "nowrap" }}>{p.note}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+                <div style={{ marginTop: 14, display: "flex", gap: 12, flexWrap: "wrap" }}>
+                  {[["Össz. lap", parts.reduce((s, p) => s + p.qty, 0) + " db"], ["Ajtó", doorW + " × " + doorH + " mm"], ["Oldallap", sideH + " × " + params.lowerDepth + " mm"]].map(([l, v]) => (
+                    <div key={l} style={{ background: "#EEF1F5", padding: "5px 10px", borderRadius: 6 }}><div style={{ fontSize: 8, color: "#828B98", textTransform: "uppercase", fontWeight: 700 }}>{l}</div><div style={{ fontSize: 13, fontWeight: 800, color: BRN, fontFamily: "IBM Plex Mono, monospace" }}>{v}</div></div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ ...cardStyle, marginTop: 16 }}>
+                <div style={{ fontWeight: 800, fontSize: 13, color: "var(--color-primary-700)", marginBottom: 12 }}>{"🚪"} Ajtólap és Vasalat beállítások</div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
+                  <GlobalHandleSelector orient={handleOrient} isCentered={handleCenter} handing={doorHanding} onChange={(o, c) => { setHandleOrient(o); setHandleCenter(c); }} />
+                  <DoorHandingSelector handing={doorHanding} onChange={setDoorHanding} />
+                  <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>Furattávolság<div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={handlePitch} onChange={e => setHandlePitch(+e.target.value)} style={{ ...inputStyle, flex: 1 }} /><span style={{ fontSize: 10, color: "#888" }}>mm</span></div></label>
+                  <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>Kezdő furat táv. oldalról<div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={handleMarginX} disabled={handleCenter && handleOrient === "horizontal"} onChange={e => setHandleMarginX(+e.target.value)} style={{ ...inputStyle, flex: 1, opacity: handleCenter && handleOrient === "horizontal" ? .5 : 1 }} /><span style={{ fontSize: 10, color: "#888" }}>mm</span></div></label>
+                  <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>Kezdő furat táv. fentről<div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={handleMarginY} onChange={e => setHandleMarginY(+e.target.value)} style={{ ...inputStyle, flex: 1 }} /><span style={{ fontSize: 10, color: "#888" }}>mm</span></div></label>
+                  <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>Pánthely távolsága széltől<div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={hingeMargin} onChange={e => setHingeMargin(+e.target.value)} style={{ ...inputStyle, flex: 1 }} /><span style={{ fontSize: 10, color: "#888" }}>mm</span></div></label>
+                </div>
+                <div style={{ background: "#eef4ff", borderRadius: 8, padding: 12, border: "1px solid #c0d8f0" }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: BLUE, textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 8 }}>Vasalat számítások</div>
+                  <div style={{ marginBottom: 10 }}><div style={{ fontSize: 11, color: "#5B6472", fontWeight: 600, marginBottom: 4 }}>Ajtólap anyaga</div><div style={{ display: "flex", gap: 6 }}>{[{ val: "butorlap", label: "Laminált bútorlap (~11.8 kg/m²)" }, { val: "mdf", label: "E1 MDF" }].map(({ val, label }) => (<button key={val} onClick={() => setDoorMaterial(val)} style={{ flex: 1, padding: "5px 8px", fontSize: 11, fontWeight: 700, borderRadius: 6, cursor: "pointer", border: doorMaterial === val ? "2px solid " + BLUE : "1.5px solid #c0d8f0", background: doorMaterial === val ? BLUE : "#fff", color: doorMaterial === val ? "#fff" : "#5B6472" }}>{label}</button>))}</div></div>
+                  {doorMaterial === "mdf" && (<div style={{ marginBottom: 10 }}><div style={{ fontSize: 11, color: "#5B6472", fontWeight: 600, marginBottom: 4 }}>MDF vastagság</div><div style={{ display: "flex", gap: 6 }}>{[18, 19, 20, 21, 22].map(t => (<button key={t} onClick={() => setMdfThickness(t)} style={{ flex: 1, padding: "5px 8px", fontSize: 11, fontWeight: 700, borderRadius: 6, cursor: "pointer", border: mdfThickness === t ? "2px solid " + BLUE : "1.5px solid #c0d8f0", background: mdfThickness === t ? BLUE : "#fff", color: mdfThickness === t ? "#fff" : "#5B6472" }}>{t} mm</button>))}</div></div>)}
+                  {[["Ajtó méret", doorW + " × " + doorH + " mm"], ["Súly (" + (doorMaterial === "mdf" ? "E1 MDF " + mdfThickness + "mm" : "Laminált bútorlap 18mm") + ")", doorWeightKg + " kg"], ["Kivetőpánt szükséglet", hingeCount + " darab/ajtó"]].map(([l, v]) => (
+                    <div key={l} style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 4 }}><span style={{ color: "#5B6472" }}>{l}:</span><span style={{ fontFamily: "IBM Plex Mono, monospace", fontWeight: 700, color: "#042C53" }}>{v}</span></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ ...cardStyle, padding: 12 }}>
+                <div style={{ fontWeight: 800, fontSize: 12, color: "var(--text-secondary)", textAlign: "center", marginBottom: 8, letterSpacing: ".06em", textTransform: "uppercase" }}>Korpusz Elölnézet</div>
+                <ZoomableSvg width={SVW} height={SVH}>
+                  <svg width={SVW} height={SVH} style={{ display: "block", margin: "0 auto" }}>
+                    <rect width={SVW} height={SVH} fill="#fff" rx={8} />
+                    {/* Lábazat */}
+                    <rect x={cx + bt * sc * 0.3} y={plinthTopY} width={cw - bt * sc * 0.6} height={params.plinthHeight * sc} fill="#EEF1F5" stroke={BRD} strokeWidth={.5} opacity={.5} />
+                    {/* Fenéklap */}
+                    {bottomPos === "between"
+                      ? <rect x={cx + bt * sc} y={plinthTopY - bt * sc} width={internalW * sc} height={bt * sc} fill="#B5D4F4" stroke={BRD} strokeWidth={.8} />
+                      : <rect x={cx} y={plinthTopY - bt * sc} width={cw} height={bt * sc} fill="#B5D4F4" stroke={BRD} strokeWidth={.8} />}
+                    <text x={cx + cw / 2} y={plinthTopY - bt * sc / 2 + 3} textAnchor="middle" fontSize={7} fill="#fff" fontWeight="700" fontFamily="Inter">Fenéklap</text>
+                    {/* Alsó átkötő (függőleges, fenéklap felett) */}
+                    {(() => {
+                      const braceBotTopY = plinthTopY - bt * sc - braceBottomH * sc;
+                      return (<>
+                        <rect x={cx + bt * sc} y={braceBotTopY} width={internalW * sc} height={braceBottomH * sc} fill="#B5D4F4" stroke={BRD} strokeWidth={.6} opacity={.7} />
+                        <text x={cx + cw / 2} y={braceBotTopY + braceBottomH * sc / 2 + 3} textAnchor="middle" fontSize={6} fill="#042C53" fontWeight="700" fontFamily="Inter">Átkötő alul</text>
+                      </>);
+                    })()}
+                    {/* Felső átkötők (függőlegesek, szekrény tetején) */}
+                    {(() => {
+                      const bfH = braceFrontH * sc; const bbH = braceBackH * sc;
+                      return (<>
+                        <rect x={cx + bt * sc} y={cabinetTopY} width={internalW * sc} height={bfH} fill="#B5D4F4" stroke={BRD} strokeWidth={.6} opacity={.85} />
+                        <text x={cx + cw / 2} y={cabinetTopY + bfH / 2 + 3} textAnchor="middle" fontSize={6} fill="#042C53" fontWeight="700" fontFamily="Inter">Átkötő elöl</text>
+                        <rect x={cx + bt * sc} y={cabinetTopY} width={internalW * sc} height={bbH} fill="none" stroke="#378ADD" strokeWidth={1} strokeDasharray="4,2" opacity={.5} />
+                        <text x={cx + cw / 2} y={cabinetTopY + bbH / 2 + 3 + bfH} textAnchor="middle" fontSize={5} fill="#378ADD" fontFamily="Inter">({braceBackH} mm hátul)</text>
+                      </>);
+                    })()}
+                    {/* Oldallapok */}
+                    <rect x={cx} y={sideTopY} width={bt * sc} height={sideDrawH} fill="#85B7EB" stroke={BRD} strokeWidth={1} />
+                    <rect x={cx + cw - bt * sc} y={sideTopY} width={bt * sc} height={sideDrawH} fill="#85B7EB" stroke={BRD} strokeWidth={1} />
+                    {/* Ajtólap kontúr */}
+                    {(() => {
+                      const doorTopY = yFromBot(params.plinthHeight + doorGapBottom + doorH);
+                      const doorBotY = yFromBot(params.plinthHeight + doorGapBottom);
+                      return (<rect x={cx + doorGapSide * sc} y={doorTopY} width={doorW * sc} height={doorBotY - doorTopY} fill="none" stroke="#378ADD" strokeWidth={1.5} strokeDasharray="6,3" opacity={.6} rx={2} />);
+                    })()}
+                    {/* Dimenzió vonalak */}
+                    <line x1={cx} y1={cy - 16} x2={cx + cw} y2={cy - 16} stroke="#555" strokeWidth={.8} /><line x1={cx} y1={cy - 20} x2={cx} y2={cy - 6} stroke="#555" strokeWidth={.8} /><line x1={cx + cw} y1={cy - 20} x2={cx + cw} y2={cy - 6} stroke="#555" strokeWidth={.8} />
+                    <text x={cx + cw / 2} y={cy - 21} textAnchor="middle" fontSize={9} fill="#333" fontWeight="700" fontFamily="IBM Plex Mono">{W}</text>
+                    <line x1={cx + cw + 16} y1={cy} x2={cx + cw + 16} y2={cy + ch} stroke="#555" strokeWidth={.8} /><line x1={cx + cw + 8} y1={cy} x2={cx + cw + 20} y2={cy} stroke="#555" strokeWidth={.8} /><line x1={cx + cw + 8} y1={cy + ch} x2={cx + cw + 20} y2={cy + ch} stroke="#555" strokeWidth={.8} />
+                    <text x={cx + cw + 16} y={cy + ch / 2 - 4} textAnchor="middle" fontSize={9} fill="#333" fontWeight="700" fontFamily="IBM Plex Mono" transform={`rotate(90, ${cx + cw + 16}, ${cy + ch / 2})`}>{totalCabinetH}</text>
+                    {/* Jelmagyarázat */}
+                    <rect x={4} y={SVH - 44} width={SVW - 8} height={40} fill="white" rx={5} stroke="#D7DCE3" strokeWidth={1} />
+                    <rect x={12} y={SVH - 36} width={10} height={7} fill="#85B7EB" stroke={BRD} strokeWidth={.5} /><text x={26} y={SVH - 30} fontSize={8} fill="#5B6472" fontFamily="Inter">Oldallap</text>
+                    <rect x={12} y={SVH - 24} width={10} height={7} fill="#B5D4F4" stroke={BRD} strokeWidth={.5} /><text x={26} y={SVH - 18} fontSize={8} fill="#5B6472" fontFamily="Inter">Fenéklap / Átkötők</text>
+                    <rect x={120} y={SVH - 24} width={10} height={7} fill="none" stroke="#378ADD" strokeWidth={1} strokeDasharray="3,2" /><text x={134} y={SVH - 18} fontSize={8} fill="#5B6472" fontFamily="Inter">Ajtólap kontúr ({doorW}{"×"}{doorH})</text>
+                  </svg>
+                </ZoomableSvg>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ═══════════════════════════════════════════
+    // SINK 2-DOOR CABINET CALCULATOR
+    // ═══════════════════════════════════════════
+    function Sink2DoorCalc({ params, boardColors, edgeBandOptions, partDefaults, onBack }) {
+      const [W, setW] = usePersistentState("Sink2DoorCalc", "W", 800);
+      const [customH, setCustomH] = usePersistentState("Sink2DoorCalc", "customH", null);
+      const [braceFrontH, setBraceFrontH] = usePersistentState("Sink2DoorCalc", "braceFrontH", 80);
+      const [braceBackH, setBraceBackH] = usePersistentState("Sink2DoorCalc", "braceBackH", 100);
+      const [braceBottomH, setBraceBottomH] = usePersistentState("Sink2DoorCalc", "braceBottomH", 150);
+      const [bottomPos, setBottomPos] = usePersistentState("Sink2DoorCalc", "bottomPos", "between");
+      const [doorGapTop, setDoorGapTop] = usePersistentState("Sink2DoorCalc", "doorGapTop", params.lowerDoorGapTop);
+      const [doorGapBottom, setDoorGapBottom] = usePersistentState("Sink2DoorCalc", "doorGapBottom", params.lowerDoorGapBottom);
+      const [doorGapSide, setDoorGapSide] = usePersistentState("Sink2DoorCalc", "doorGapSide", params.lowerDoorGapSide);
+      const [splitSides, setSplitSides] = usePersistentState("Sink2DoorCalc", "splitSides", false);
+      const [swappedParts, setSwappedParts] = usePersistentState("Sink2DoorCalc", "swappedParts", {});
+      const [handlePitch, setHandlePitch] = usePersistentState("Sink2DoorCalc", "handlePitch", params.handlePitch);
+      const [handleOrient, setHandleOrient] = usePersistentState("Sink2DoorCalc", "handleOrient", params.handleOrient);
+      const [handleCenter, setHandleCenter] = usePersistentState("Sink2DoorCalc", "handleCenter", params.handleCenter);
+      const [doorHanding, setDoorHanding] = usePersistentState("Sink2DoorCalc", "doorHanding", "left");
+      const [handleMarginX, setHandleMarginX] = usePersistentState("Sink2DoorCalc", "handleMarginX", params.handleMarginX);
+      const [handleMarginY, setHandleMarginY] = usePersistentState("Sink2DoorCalc", "handleMarginY", params.handleMarginY);
+      const [hingeMargin, setHingeMargin] = usePersistentState("Sink2DoorCalc", "hingeMargin", params.hingeMargin);
+      const [doorMaterial, setDoorMaterial] = usePersistentState("Sink2DoorCalc", "doorMaterial", "butorlap");
+      const [mdfThickness, setMdfThickness] = usePersistentState("Sink2DoorCalc", "mdfThickness", 18);
+
+      const bt = params.boardThickness;
+      const autoTotalCabinetH = params.counterHeight - params.countertopThickness;
+      const totalCabinetH = customH !== null ? customH : autoTotalCabinetH;
+      const corpusFrameH = totalCabinetH - params.plinthHeight;
+
+      let sideH = corpusFrameH;
+      if (bottomPos === "under") sideH -= bt;
+
+      const internalW = W - 2 * bt;
+      const doorGapMiddle = 2;
+      const doorH = corpusFrameH - doorGapTop - doorGapBottom;
+      const doorW = (W - 2 * doorGapSide - doorGapMiddle) / 2;
+      const bottomPanelL = bottomPos === "between" ? internalW : W;
+
+      const BOARD_KG_PER_M2 = doorMaterial === "mdf" ? (mdfThickness * 0.7) : 11.8;
+      const doorAreaM2 = (doorH / 1000) * (doorW / 1000);
+      const doorWeightKg = R(doorAreaM2 * BOARD_KG_PER_M2, 2);
+      const hingesByHeight = doorH <= 900 ? 2 : doorH <= 1600 ? 3 : doorH <= 2000 ? 4 : Math.max(2, Math.ceil(doorH / 500));
+      const hingesByWeight = doorWeightKg <= 6 ? 2 : doorWeightKg <= 12 ? 3 : doorWeightKg <= 17 ? 4 : doorWeightKg <= 22 ? 5 : Math.max(2, Math.ceil(doorWeightKg / 5));
+      const hingeCount = Math.max(hingesByHeight, hingesByWeight);
+
+      const getDef = (id) => partDefaults.find(p => p.id === id) || { colorIdx: 0, edges: [e04, null, null, null] };
+      const sideDef = getDef("lower_side");
+      const bottomDef = getDef("lower_bottom");
+      const braceFDef = getDef("lower_brace_f");
+      const braceBDef = getDef("lower_brace_b");
+      const doorDef = getDef("lower_door");
+
+      const sideNote = () => bottomPos === "under" ? "Lent rááll" : "";
+
+      const defaultParts = [
+        ...(splitSides ? [
+          { id: "side_l", name: "Oldallap (bal)", qty: 1, l: sideH, w: params.lowerDepth, t: bt, note: sideNote(), colorIdx: sideDef.colorIdx, edges: [...sideDef.edges] },
+          { id: "side_r", name: "Oldallap (jobb)", qty: 1, l: sideH, w: params.lowerDepth, t: bt, note: sideNote(), colorIdx: sideDef.colorIdx, edges: [...sideDef.edges] },
+        ] : [
+          { id: "side", name: "Oldallap", qty: 2, l: sideH, w: params.lowerDepth, t: bt, note: sideNote(), colorIdx: sideDef.colorIdx, edges: [...sideDef.edges] },
+        ]),
+        { id: "bottom", name: "Fenéklap", qty: 1, l: bottomPanelL, w: params.lowerDepth, t: bt, note: bottomPos === "between" ? "Oldalfalak között" : "Oldalfalak alatt", colorIdx: bottomDef.colorIdx, edges: bottomPos === "between" ? [...bottomDef.edges] : [bottomDef.edges[0], bottomDef.edges[1], bottomDef.edges[0] || e04, bottomDef.edges[3]] },
+        { id: "brace_f", name: "Átkötő elöl (függőleges)", qty: 1, l: internalW, w: braceFrontH, t: bt, note: "Felül elöl, függőlegesen", colorIdx: braceFDef.colorIdx, edges: [...braceFDef.edges] },
+        { id: "brace_b", name: "Átkötő hátul (függőleges)", qty: 1, l: internalW, w: braceBackH, t: bt, note: "Felül hátul, alja élzárva 0.4", colorIdx: braceBDef.colorIdx, edges: [null, { o: 0, t: 0 }, null, null] },
+        { id: "brace_bot", name: "Átkötő alul (függőleges)", qty: 1, l: internalW, w: braceBottomH, t: bt, note: "Fenéklap felett, teteje élzárva 0.4", colorIdx: braceBDef.colorIdx, edges: [{ o: 0, t: 0 }, null, null, null] },
+        { id: "door", name: "Ajtólap", qty: 2, l: doorH, w: doorW, t: bt, note: R(doorWeightKg, 1) + " kg — Blum " + hingeCount + " pár pánt", colorIdx: doorDef.colorIdx, edges: [...doorDef.edges] },
+      ];
+
+      const toggleSwap = (id) => setSwappedParts(prev => ({ ...prev, [id]: !prev[id] }));
+      const getDisplayDims = (p) => { const swapped = swappedParts[p.id]; return swapped ? { l: p.w, w: p.l } : { l: p.l, w: p.w }; };
+      const [partOverrides, setPartOverrides] = usePersistentState("Sink2DoorCalc", "partOverrides", {});
+      const getPart = (p) => { const ov = partOverrides[p.id] || {}; return { ...p, colorIdx: ov.colorIdx !== undefined ? ov.colorIdx : p.colorIdx, edges: ov.edges || p.edges }; };
+      const setPartOverride = (id, key, val) => setPartOverrides(prev => ({ ...prev, [id]: { ...prev[id], [key]: val } }));
+      const parts = defaultParts.map(getPart);
+
+      const thickLabels = ["0.4", "2"];
+      const edgeBg = (e) => { if (!e) return "#D7DCE3"; const colors = ["#b8d0e8", "#9FE1CB"]; return colors[e.o] || "#ddd"; };
+      const cycleEdgeColor = (e) => { if (!e) return { o: 0, t: edgeBandOptions[0]?.defT || 0 }; if (e.o < edgeBandOptions.length - 1) return { ...e, o: e.o + 1 }; return null; };
+      const toggleEdgeThick = (e) => { if (!e) return { o: 0, t: 1 }; return { ...e, t: e.t === 0 ? 1 : 0 }; };
+
+      const SVW = 370, SVH = 480;
+      const padL = 80, padR = 80, padT = 36, padB = 40;
+      const drawW = SVW - padL - padR; const drawH = SVH - padT - padB;
+      const scX = drawW / W; const scY = drawH / (corpusFrameH + params.plinthHeight);
+      const sc = Math.min(scX, scY);
+      const cw = W * sc; const ch = (corpusFrameH + params.plinthHeight) * sc;
+      const cx = padL + (drawW - cw) / 2; const cy = padT + (drawH - ch) / 2;
+      const yFromBot = (mm) => cy + ch - mm * sc;
+      const cabinetTopY = cy; const cabinetBotY = cy + ch;
+      const plinthTopY = cabinetBotY - params.plinthHeight * sc;
+      const sideTopY = cabinetTopY;
+      const sideBotY = bottomPos === "under" ? plinthTopY - bt * sc : plinthTopY;
+      const sideDrawH = sideBotY - sideTopY;
+
+      return (
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: 16 }}>
+          <button onClick={onBack} style={{ padding: "6px 16px", borderRadius: 8, background: "rgba(0,0,0,.04)", border: "1.5px solid var(--color-border)", color: "var(--color-text-secondary)", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "Inter, sans-serif", marginBottom: 16 }}>{"←"} Vissza a szekrénytípusokhoz</button>
+          <div style={{ display: "grid", gridTemplateColumns: "340px 1fr", gap: 20, alignItems: "start" }}>
+            <div>
+              <div style={cardStyle}>
+                <div style={{ fontWeight: 800, fontSize: 14, color: "var(--color-primary-700)", marginBottom: 12 }}>{"🚰🚪"} 2 ajtós mosogatós szekrény</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
+                    Szekrény szélessége
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <input type="number" value={W} min={200} onChange={e => setW(e.target.value === "" ? "" : +e.target.value)} style={{ ...inputStyle, fontSize: 14 }} />
+                      <span style={{ fontSize: 11, color: "#888", fontWeight: 600 }}>mm</span>
+                    </div>
+                    <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                      {[600, 800, 900, 1000, 1200].map(w => (<button key={w} onClick={e => { e.preventDefault(); setW(w); }} style={{ padding: "2px 8px", borderRadius: 5, fontSize: 11, cursor: "pointer", background: W === w ? "#1E3A8A" : "#EEF1F5", color: W === w ? "#fff" : "#5B6472", border: W === w ? "1.5px solid #1E3A8A" : "1.5px solid #A6AEBA", fontWeight: 700, fontFamily: "IBM Plex Mono, monospace", transition: "all .15s" }}>{w}</button>))}
+                    </div>
+                  </label>
+                  <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span>Szekrény magassága (lábazattal)</span>
+                      {customH !== null && (<button onClick={() => setCustomH(null)} style={{ fontSize: 9, padding: "1px 6px", borderRadius: 5, cursor: "pointer", background: "var(--color-neutral-100)", border: "1px solid var(--color-border)", color: "var(--color-text-secondary)", fontWeight: 700 }}>{"↩"} Auto ({autoTotalCabinetH} mm)</button>)}
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <input type="number" value={customH !== null ? customH : autoTotalCabinetH} min={100} onChange={e => setCustomH(e.target.value === "" ? "" : +e.target.value)} style={{ ...inputStyle, fontSize: 14, borderColor: customH !== null ? AMB : "#ddd" }} />
+                      <span style={{ fontSize: 11, color: "#888", fontWeight: 600 }}>mm</span>
+                    </div>
+                    {customH === null && <span style={{ fontSize: 9, color: "#aaa" }}>Számított: {autoTotalCabinetH} mm (módosítható)</span>}
+                  </label>
+                  {[
+                    { label: "Felső átkötő (elöl) magassága", val: braceFrontH, set: setBraceFrontH, min: 30, unit: "mm" },
+                    { label: "Felső átkötő (hátul) magassága", val: braceBackH, set: setBraceBackH, min: 30, unit: "mm" },
+                    { label: "Alsó átkötő magassága", val: braceBottomH, set: setBraceBottomH, min: 30, unit: "mm" },
+                  ].map(f => (
+                    <label key={f.label} style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
+                      {f.label}
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <input type="number" value={f.val} min={f.min} onChange={e => f.set(e.target.value === "" ? "" : +e.target.value)} style={{ ...inputStyle, fontSize: 14 }} />
+                        <span style={{ fontSize: 11, color: "#888", fontWeight: 600 }}>{f.unit}</span>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+                <div style={{ marginTop: 14 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 8, textTransform: "uppercase", letterSpacing: ".05em" }}>Ajtó rések</div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6 }}>
+                    {[{ label: "Alul", val: doorGapBottom, set: setDoorGapBottom }, { label: "Felül", val: doorGapTop, set: setDoorGapTop }, { label: "Oldalt", val: doorGapSide, set: setDoorGapSide }].map(f => (
+                      <label key={f.label} style={{ display: "flex", flexDirection: "column", gap: 2, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>{f.label}<div style={{ display: "flex", alignItems: "center", gap: 4 }}><input type="number" value={f.val} min={0} onChange={e => f.set(e.target.value === "" ? "" : +e.target.value)} style={{ ...inputStyle, fontSize: 13, padding: "4px 6px" }} /><span style={{ fontSize: 10, color: "#aaa" }}>mm</span></div></label>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ marginTop: 14 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 8, textTransform: "uppercase", letterSpacing: ".05em" }}>Fenéklap pozíciója</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    {[
+                      { id: "between", label: "Oldalfalak között", svg: <svg width="36" height="22" viewBox="0 0 36 22" fill="currentColor" style={{flexShrink:0,marginTop:2}}><rect x="0" y="0" width="5" height="22"/><rect x="31" y="0" width="5" height="22"/><rect x="6" y="16" width="24" height="5"/></svg>, desc: "Fenéklap a két oldallap közé kerül" },
+                      { id: "under", label: "Oldalfalak alatt", svg: <svg width="36" height="22" viewBox="0 0 36 22" fill="currentColor" style={{flexShrink:0,marginTop:2}}><rect x="0" y="0" width="5" height="15"/><rect x="31" y="0" width="5" height="15"/><rect x="0" y="16" width="36" height="6"/></svg>, desc: "Fenéklap az oldallapok alatt, azok ráállnak" },
+                    ].map(opt => (
+                      <button key={opt.id} onClick={() => setBottomPos(opt.id)} style={{ padding: "8px 12px", borderRadius: 8, fontSize: 12, cursor: "pointer", background: bottomPos === opt.id ? "#1E3A8A" : "#EEF1F5", color: bottomPos === opt.id ? "#fff" : "#5B6472", border: bottomPos === opt.id ? "2px solid #1E3A8A" : "2px solid #D7DCE3", fontWeight: 700, fontFamily: "Inter, sans-serif", textAlign: "left", transition: "all .15s", display: "flex", alignItems: "flex-start", gap: 10 }}>
+                        {opt.svg}<div>{opt.label}<div style={{ fontSize: 10, fontWeight: 400, opacity: .7, marginTop: 2 }}>{opt.desc}</div></div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ marginTop: 14 }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
+                    <div onClick={() => setSplitSides(s => !s)} style={{ width: 36, height: 20, borderRadius: 10, background: splitSides ? "#1E3A8A" : "#D7DCE3", position: "relative", cursor: "pointer", transition: "all .2s" }}>
+                      <div style={{ width: 16, height: 16, borderRadius: 8, background: "#fff", position: "absolute", top: 2, left: splitSides ? 18 : 2, transition: "all .2s", boxShadow: "0 1px 3px rgba(0,0,0,.2)" }} />
+                    </div>
+                    Különböző oldallapok (bal/jobb)
+                  </label>
+                </div>
+                <div style={{ marginTop: 16, background: "#E6F1FB", borderRadius: 8, padding: 12, border: "1px solid #B5D4F4" }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "var(--color-primary-700)", textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 8 }}>Számított méretek</div>
+                  {[["Oldallap H", sideH + " mm"], ["Belső szél.", internalW + " mm"], ["Fenéklap sz.", bottomPanelL + " mm"], ["Átkötő (elöl)", internalW + " × " + braceFrontH + " mm"], ["Átkötő (hátul)", internalW + " × " + braceBackH + " mm"], ["Átkötő (alul)", internalW + " × " + braceBottomH + " mm"], ["Ajtó (1 db)", doorW + " × " + doorH + " mm"]].map(([l, v]) => (
+                    <div key={l} style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 4 }}>
+                      <span style={{ color: "#5B6472" }}>{l}:</span>
+                      <span style={{ fontFamily: "IBM Plex Mono, monospace", fontWeight: 700, color: "var(--text)" }}>{v}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div style={cardStyle}>
+                <div style={{ fontWeight: 800, fontSize: 14, color: "var(--color-primary-700)", marginBottom: 12 }}>{"📋"} Alkatrészlista</div>
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                    <thead>
+                      <tr>{["Alkatrész", "db", "H × Sz (mm)  ⇄", "Vtg.", "Szín", "Élek (H1·H2·Sz1·Sz2)", "Megj."].map((h, i) => (<th key={i} style={{ padding: "7px 6px", textAlign: "left", fontSize: 9, fontWeight: 700, background: "var(--color-primary-700)", color: "#fff", textTransform: "uppercase", letterSpacing: ".03em", whiteSpace: "nowrap", borderRight: "1px solid rgba(255,255,255,.1)" }}>{h}</th>))}</tr>
+                    </thead>
+                    <tbody>
+                      {parts.map((p, i) => {
+                        const dims = getDisplayDims(p); const isSwapped = !!swappedParts[p.id];
+                        return (
+                          <tr key={i} style={{ background: i % 2 ? "#F7F8FA" : "#fff", height: 32 }}>
+                            <td style={{ padding: "6px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap" }}>{p.name}</td>
+                            <td style={{ padding: "6px", textAlign: "center", whiteSpace: "nowrap" }}>{monoSpan(p.qty)}</td>
+                            <td style={{ padding: "6px", whiteSpace: "nowrap" }}><div style={{ display: "flex", alignItems: "center", gap: 3 }}>{monoSpan(dims.l)}<span style={{ fontSize: 10, color: "#aaa" }}>×</span>{monoSpan(dims.w)}<button onClick={() => toggleSwap(p.id)} title="Szálirány megfordítása" style={{ marginLeft: 2, padding: "1px 5px", borderRadius: 4, cursor: "pointer", fontSize: 10, fontWeight: 700, lineHeight: 1, background: isSwapped ? "#e8f0ff" : "#f0f0f0", border: isSwapped ? "1.5px solid #378ADD" : "1px solid #ccc", color: isSwapped ? "#378ADD" : "#888" }}>{"⇄"}</button></div></td>
+                            <td style={{ padding: "6px", whiteSpace: "nowrap" }}>{monoSpan(p.t)}</td>
+                            <td style={{ padding: "6px", whiteSpace: "nowrap" }}><div onClick={() => { const next = ((p.colorIdx || 0) + 1) % boardColors.length; setPartOverride(p.id, "colorIdx", next); }} style={{ display: "flex", alignItems: "center", gap: 4, cursor: "pointer", userSelect: "none" }} title="Kattints a szín váltáshoz"><div style={{ width: 14, height: 14, borderRadius: 3, background: boardColors[p.colorIdx]?.hex || "#ccc", border: "1.5px solid #888", flexShrink: 0 }} /><span style={{ fontSize: 10, color: "#666" }}>{boardColors[p.colorIdx]?.name || "?"}</span></div></td>
+                            <td style={{ padding: "6px" }}><div style={{ display: "flex", gap: 2 }}>{["H1","H2","Sz1","Sz2"].map((lbl, ei) => { const ev = p.edges[ei]; return (<div key={lbl} onClick={() => { const ne = [...p.edges]; ne[ei] = cycleEdgeColor(ev); setPartOverride(p.id, "edges", ne); }} onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); const ne = [...p.edges]; ne[ei] = toggleEdgeThick(ev); setPartOverride(p.id, "edges", ne); }} title={lbl + ": bal klikk=szín, jobb klikk=vastagság"} style={{ width: 28, height: 20, borderRadius: 3, cursor: "pointer", userSelect: "none", background: edgeBg(ev), border: ev ? "1.5px solid #888" : "1px solid #D7DCE3", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 7, fontWeight: 700, color: ev ? "#333" : "#bbb", transition: "all .1s" }}>{ev ? thickLabels[ev.t] : "—"}</div>); })}</div></td>
+                            <td style={{ padding: "6px", fontSize: 10, color: "#888", whiteSpace: "nowrap" }}>{p.note}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+                <div style={{ marginTop: 14, display: "flex", gap: 12, flexWrap: "wrap" }}>
+                  {[["Össz. lap", parts.reduce((s, p) => s + p.qty, 0) + " db"], ["Ajtó (1db)", doorW + " × " + doorH + " mm"], ["Oldallap", sideH + " × " + params.lowerDepth + " mm"]].map(([l, v]) => (
+                    <div key={l} style={{ background: "#EEF1F5", padding: "5px 10px", borderRadius: 6 }}><div style={{ fontSize: 8, color: "#828B98", textTransform: "uppercase", fontWeight: 700 }}>{l}</div><div style={{ fontSize: 13, fontWeight: 800, color: BRN, fontFamily: "IBM Plex Mono, monospace" }}>{v}</div></div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ ...cardStyle, marginTop: 16 }}>
+                <div style={{ fontWeight: 800, fontSize: 13, color: "var(--color-primary-700)", marginBottom: 12 }}>{"🚪"} Ajtólap és Vasalat beállítások</div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
+                  <GlobalHandleSelector orient={handleOrient} isCentered={handleCenter} handing={doorHanding} onChange={(o, c) => { setHandleOrient(o); setHandleCenter(c); }} />
+                  <DoorHandingSelector handing={doorHanding} onChange={setDoorHanding} />
+                  <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>Furattávolság<div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={handlePitch} onChange={e => setHandlePitch(+e.target.value)} style={{ ...inputStyle, flex: 1 }} /><span style={{ fontSize: 10, color: "#888" }}>mm</span></div></label>
+                  <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>Kezdő furat táv. oldalról<div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={handleMarginX} disabled={handleCenter && handleOrient === "horizontal"} onChange={e => setHandleMarginX(+e.target.value)} style={{ ...inputStyle, flex: 1, opacity: handleCenter && handleOrient === "horizontal" ? .5 : 1 }} /><span style={{ fontSize: 10, color: "#888" }}>mm</span></div></label>
+                  <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>Kezdő furat táv. fentről<div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={handleMarginY} onChange={e => setHandleMarginY(+e.target.value)} style={{ ...inputStyle, flex: 1 }} /><span style={{ fontSize: 10, color: "#888" }}>mm</span></div></label>
+                  <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>Pánthely távolsága széltől<div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={hingeMargin} onChange={e => setHingeMargin(+e.target.value)} style={{ ...inputStyle, flex: 1 }} /><span style={{ fontSize: 10, color: "#888" }}>mm</span></div></label>
+                </div>
+                <div style={{ background: "#eef4ff", borderRadius: 8, padding: 12, border: "1px solid #c0d8f0" }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: BLUE, textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 8 }}>Vasalat számítások</div>
+                  <div style={{ marginBottom: 10 }}><div style={{ fontSize: 11, color: "#5B6472", fontWeight: 600, marginBottom: 4 }}>Ajtólap anyaga</div><div style={{ display: "flex", gap: 6 }}>{[{ val: "butorlap", label: "Laminált bútorlap (~11.8 kg/m²)" }, { val: "mdf", label: "E1 MDF" }].map(({ val, label }) => (<button key={val} onClick={() => setDoorMaterial(val)} style={{ flex: 1, padding: "5px 8px", fontSize: 11, fontWeight: 700, borderRadius: 6, cursor: "pointer", border: doorMaterial === val ? "2px solid " + BLUE : "1.5px solid #c0d8f0", background: doorMaterial === val ? BLUE : "#fff", color: doorMaterial === val ? "#fff" : "#5B6472" }}>{label}</button>))}</div></div>
+                  {doorMaterial === "mdf" && (<div style={{ marginBottom: 10 }}><div style={{ fontSize: 11, color: "#5B6472", fontWeight: 600, marginBottom: 4 }}>MDF vastagság</div><div style={{ display: "flex", gap: 6 }}>{[18, 19, 20, 21, 22].map(t => (<button key={t} onClick={() => setMdfThickness(t)} style={{ flex: 1, padding: "5px 8px", fontSize: 11, fontWeight: 700, borderRadius: 6, cursor: "pointer", border: mdfThickness === t ? "2px solid " + BLUE : "1.5px solid #c0d8f0", background: mdfThickness === t ? BLUE : "#fff", color: mdfThickness === t ? "#fff" : "#5B6472" }}>{t} mm</button>))}</div></div>)}
+                  {[["Ajtó méret (1 db)", doorW + " × " + doorH + " mm"], ["Súly (" + (doorMaterial === "mdf" ? "E1 MDF " + mdfThickness + "mm" : "Laminált bútorlap 18mm") + ")", doorWeightKg + " kg"], ["Kivetőpánt szükséglet", hingeCount + " darab/ajtó"]].map(([l, v]) => (
+                    <div key={l} style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 4 }}><span style={{ color: "#5B6472" }}>{l}:</span><span style={{ fontFamily: "IBM Plex Mono, monospace", fontWeight: 700, color: "#042C53" }}>{v}</span></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ ...cardStyle, padding: 12 }}>
+                <div style={{ fontWeight: 800, fontSize: 12, color: "var(--text-secondary)", textAlign: "center", marginBottom: 8, letterSpacing: ".06em", textTransform: "uppercase" }}>Korpusz Elölnézet</div>
+                <ZoomableSvg width={SVW} height={SVH}>
+                  <svg width={SVW} height={SVH} style={{ display: "block", margin: "0 auto" }}>
+                    <rect width={SVW} height={SVH} fill="#fff" rx={8} />
+                    <rect x={cx + bt * sc * 0.3} y={plinthTopY} width={cw - bt * sc * 0.6} height={params.plinthHeight * sc} fill="#EEF1F5" stroke={BRD} strokeWidth={.5} opacity={.5} />
+                    {bottomPos === "between" ? <rect x={cx + bt * sc} y={plinthTopY - bt * sc} width={internalW * sc} height={bt * sc} fill="#B5D4F4" stroke={BRD} strokeWidth={.8} /> : <rect x={cx} y={plinthTopY - bt * sc} width={cw} height={bt * sc} fill="#B5D4F4" stroke={BRD} strokeWidth={.8} />}
+                    <text x={cx + cw / 2} y={plinthTopY - bt * sc / 2 + 3} textAnchor="middle" fontSize={7} fill="#fff" fontWeight="700" fontFamily="Inter">Fenéklap</text>
+                    {(() => {
+                      const braceBotTopY = plinthTopY - bt * sc - braceBottomH * sc;
+                      return (<><rect x={cx + bt * sc} y={braceBotTopY} width={internalW * sc} height={braceBottomH * sc} fill="#B5D4F4" stroke={BRD} strokeWidth={.6} opacity={.7} /><text x={cx + cw / 2} y={braceBotTopY + braceBottomH * sc / 2 + 3} textAnchor="middle" fontSize={6} fill="#042C53" fontWeight="700" fontFamily="Inter">Átkötő alul</text></>);
+                    })()}
+                    {(() => {
+                      const bfH = braceFrontH * sc;
+                      return (<><rect x={cx + bt * sc} y={cabinetTopY} width={internalW * sc} height={bfH} fill="#B5D4F4" stroke={BRD} strokeWidth={.6} opacity={.85} /><text x={cx + cw / 2} y={cabinetTopY + bfH / 2 + 3} textAnchor="middle" fontSize={6} fill="#042C53" fontWeight="700" fontFamily="Inter">Átkötő elöl</text></>);
+                    })()}
+                    <rect x={cx} y={sideTopY} width={bt * sc} height={sideDrawH} fill="#85B7EB" stroke={BRD} strokeWidth={1} />
+                    <rect x={cx + cw - bt * sc} y={sideTopY} width={bt * sc} height={sideDrawH} fill="#85B7EB" stroke={BRD} strokeWidth={1} />
+                    {(() => {
+                      const doorTopY = yFromBot(params.plinthHeight + doorGapBottom + doorH); const doorBotY = yFromBot(params.plinthHeight + doorGapBottom);
+                      return (<>
+                        <rect x={cx + doorGapSide * sc} y={doorTopY} width={doorW * sc} height={doorBotY - doorTopY} fill="none" stroke="#378ADD" strokeWidth={1.5} strokeDasharray="6,3" opacity={.6} rx={2} />
+                        <rect x={cx + (doorGapSide + doorW + doorGapMiddle) * sc} y={doorTopY} width={doorW * sc} height={doorBotY - doorTopY} fill="none" stroke="#378ADD" strokeWidth={1.5} strokeDasharray="6,3" opacity={.6} rx={2} />
+                      </>);
+                    })()}
+                    <line x1={cx} y1={cy - 16} x2={cx + cw} y2={cy - 16} stroke="#555" strokeWidth={.8} /><line x1={cx} y1={cy - 20} x2={cx} y2={cy - 6} stroke="#555" strokeWidth={.8} /><line x1={cx + cw} y1={cy - 20} x2={cx + cw} y2={cy - 6} stroke="#555" strokeWidth={.8} />
+                    <text x={cx + cw / 2} y={cy - 21} textAnchor="middle" fontSize={9} fill="#333" fontWeight="700" fontFamily="IBM Plex Mono">{W}</text>
+                    <line x1={cx + cw + 16} y1={cy} x2={cx + cw + 16} y2={cy + ch} stroke="#555" strokeWidth={.8} /><line x1={cx + cw + 8} y1={cy} x2={cx + cw + 20} y2={cy} stroke="#555" strokeWidth={.8} /><line x1={cx + cw + 8} y1={cy + ch} x2={cx + cw + 20} y2={cy + ch} stroke="#555" strokeWidth={.8} />
+                    <text x={cx + cw + 16} y={cy + ch / 2 - 4} textAnchor="middle" fontSize={9} fill="#333" fontWeight="700" fontFamily="IBM Plex Mono" transform={`rotate(90, ${cx + cw + 16}, ${cy + ch / 2})`}>{totalCabinetH}</text>
+                    <rect x={4} y={SVH - 44} width={SVW - 8} height={40} fill="white" rx={5} stroke="#D7DCE3" strokeWidth={1} />
+                    <rect x={12} y={SVH - 36} width={10} height={7} fill="#85B7EB" stroke={BRD} strokeWidth={.5} /><text x={26} y={SVH - 30} fontSize={8} fill="#5B6472" fontFamily="Inter">Oldallap</text>
+                    <rect x={12} y={SVH - 24} width={10} height={7} fill="#B5D4F4" stroke={BRD} strokeWidth={.5} /><text x={26} y={SVH - 18} fontSize={8} fill="#5B6472" fontFamily="Inter">Fenéklap / Átkötők</text>
+                    <rect x={120} y={SVH - 24} width={10} height={7} fill="none" stroke="#378ADD" strokeWidth={1} strokeDasharray="3,2" /><text x={134} y={SVH - 18} fontSize={8} fill="#5B6472" fontFamily="Inter">2db Ajtólap kontúr ({doorW}{"×"}{doorH})</text>
+                  </svg>
+                </ZoomableSvg>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ═══════════════════════════════════════════
     // UPPER 1-DOOR CABINET CALCULATOR
     // ═══════════════════════════════════════════
     function Upper1DoorCalc({ params, boardColors, edgeBandOptions, partDefaults, onBack }) {
@@ -2660,13 +3230,12 @@
                   <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <span>Szekrény magassága</span>
-                      {customH !== null && (<button onClick={() => setCustomH(null)} style={{ fontSize: 9, padding: "1px 6px", borderRadius: 5, cursor: "pointer", background: "var(--color-neutral-100)", border: "1px solid var(--color-border)", color: "var(--color-text-secondary)", fontWeight: 700 }}>{"↩"} Auto ({autoTotalCabinetH} mm)</button>)}
+                      {customH !== null && (<button onClick={() => setCustomH(null)} style={{ fontSize: 9, padding: "1px 6px", borderRadius: 5, cursor: "pointer", background: "var(--color-neutral-100)", border: "1px solid var(--color-border)", color: "var(--color-text-secondary)", fontWeight: 700 }}>{"↩"} Alap ({autoTotalCabinetH} mm)</button>)}
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                       <input type="number" value={customH !== null ? customH : autoTotalCabinetH} min={100} onChange={e => setCustomH(e.target.value === "" ? "" : +e.target.value)} style={{ ...inputStyle, fontSize: 14, borderColor: customH !== null ? AMB : "#ddd" }} />
                       <span style={{ fontSize: 11, color: "#888", fontWeight: 600 }}>mm</span>
                     </div>
-                    {customH === null && <span style={{ fontSize: 9, color: "#aaa" }}>Számított: {autoTotalCabinetH} mm (módosítható)</span>}
                   </label>
                   {[
                     { label: "Hátlap vastagság", val: backT, set: setBackT, min: 1, unit: "mm" },
@@ -2802,7 +3371,7 @@
                   <DoorHandingSelector handing={doorHanding} onChange={setDoorHanding} />
                   <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>Furattávolság<div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={handlePitch} onChange={e => setHandlePitch(+e.target.value)} style={{ ...inputStyle, flex: 1 }} /><span style={{ fontSize: 10, color: "#888" }}>mm</span></div></label>
                   <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>Kezdő furat táv. oldalról<div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={handleMarginX} disabled={handleCenter && handleOrient === "horizontal"} onChange={e => setHandleMarginX(+e.target.value)} style={{ ...inputStyle, flex: 1, opacity: handleCenter && handleOrient === "horizontal" ? .5 : 1 }} /><span style={{ fontSize: 10, color: "#888" }}>mm</span></div></label>
-                  <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>Kezdő furat táv. fentről<div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={handleMarginY} onChange={e => setHandleMarginY(+e.target.value)} style={{ ...inputStyle, flex: 1 }} /><span style={{ fontSize: 10, color: "#888" }}>mm</span></div></label>
+                  <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>Kezdő furat táv. alulról<div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={handleMarginY} onChange={e => setHandleMarginY(+e.target.value)} style={{ ...inputStyle, flex: 1 }} /><span style={{ fontSize: 10, color: "#888" }}>mm</span></div></label>
                   <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>Pánthely távolsága széltől<div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={hingeMargin} onChange={e => setHingeMargin(+e.target.value)} style={{ ...inputStyle, flex: 1 }} /><span style={{ fontSize: 10, color: "#888" }}>mm</span></div></label>
                 </div>
                 <div style={{ background: "#eef4ff", borderRadius: 8, padding: 12, border: "1px solid #c0d8f0" }}>
@@ -2924,12 +3493,12 @@
                   const dwa = doorW * dsc; const dha = doorH * dsc;
                   const dx = 60 + (SVW - 120 - dwa) / 2; const dy = 50 + (dSVH - 100 - dha) / 2;
                   let hx1 = 0, hy1 = 0, hx2 = 0, hy2 = 0;
-                  let dimFromTop1 = 0, dimFromTop2 = 0, dimFromLeft1 = 0, dimFromRight2 = 0;
+                  let dimFromBot1 = 0, dimFromBot2 = 0, dimFromLeft1 = 0, dimFromRight2 = 0;
                   let showLeftDim = false, showRightDim = false, showCenterDimsH = false;
                   const hingesLeft = doorHanding === "left";
                   const hingeX = hingesLeft ? dx + 22.5 * dsc : dx + dwa - 22.5 * dsc;
                   if (handleOrient === "horizontal") {
-                    hy1 = dy + handleMarginY * dsc; hy2 = hy1; dimFromTop1 = handleMarginY;
+                    hy1 = dy + dha - handleMarginY * dsc; hy2 = hy1; dimFromBot1 = handleMarginY;
                     if (!handleCenter) {
                       if (doorHanding === "right") { hx1 = dx + handleMarginX * dsc; hx2 = hx1 + handlePitch * dsc; dimFromLeft1 = handleMarginX; showLeftDim = true; }
                       else { hx2 = dx + dwa - handleMarginX * dsc; hx1 = hx2 - handlePitch * dsc; dimFromRight2 = handleMarginX; showRightDim = true; }
@@ -2938,8 +3507,8 @@
                     if (doorHanding === "right") { hx1 = dx + handleMarginX * dsc; dimFromLeft1 = handleMarginX; showLeftDim = true; }
                     else { hx1 = dx + dwa - handleMarginX * dsc; dimFromRight2 = handleMarginX; showRightDim = true; }
                     hx2 = hx1;
-                    if (!handleCenter) { hy1 = dy + handleMarginY * dsc; hy2 = hy1 + handlePitch * dsc; dimFromTop1 = handleMarginY; dimFromTop2 = handleMarginY + handlePitch; }
-                    else { hy1 = dy + dha / 2 - (handlePitch * dsc) / 2; hy2 = dy + dha / 2 + (handlePitch * dsc) / 2; dimFromTop1 = Math.round((doorH - handlePitch) / 2); dimFromTop2 = dimFromTop1 + handlePitch; }
+                    if (!handleCenter) { hy2 = dy + dha - handleMarginY * dsc; hy1 = hy2 - handlePitch * dsc; dimFromBot2 = handleMarginY; dimFromBot1 = handleMarginY + handlePitch; }
+                    else { hy1 = dy + dha / 2 - (handlePitch * dsc) / 2; hy2 = dy + dha / 2 + (handlePitch * dsc) / 2; dimFromBot2 = Math.round((doorH - handlePitch) / 2); dimFromBot1 = dimFromBot2 + handlePitch; }
                   }
                   const hingeYs = [];
                   if (hingeCount >= 2) { hingeYs.push(dy + hingeMargin * dsc); hingeYs.push(dy + dha - hingeMargin * dsc); const space = (doorH - 2 * hingeMargin) / (hingeCount - 1); for (let i = 1; i < hingeCount - 1; i++) hingeYs.push(dy + (hingeMargin + i * space) * dsc); }
@@ -2958,24 +3527,24 @@
                         {handleOrient === "vertical" && (() => {
                           const isRightSide = hx1 > dx + dwa / 2; const dir = isRightSide ? -1 : 1; const dimX = hx1 + dir * 16;
                           return (<>
-                            <line x1={dimX} y1={dy} x2={dimX} y2={hy1} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={dimX - 4} y1={dy} x2={dimX + 4} y2={dy} stroke="#0C447C" strokeWidth={.7} /><line x1={dimX - 4} y1={hy1} x2={dimX + 4} y2={hy1} stroke="#0C447C" strokeWidth={.7} />
-                            <text x={dimX} y={(dy + hy1) / 2 - 4} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono" transform={`rotate(-90, ${dimX}, ${(dy + hy1) / 2})`}>{dimFromTop1}</text>
-                            <line x1={dimX} y1={hy1} x2={dimX} y2={hy2} stroke="#A32D2D" strokeWidth={.7} strokeDasharray="3,2" /><line x1={dimX - 4} y1={hy2} x2={dimX + 4} y2={hy2} stroke="#A32D2D" strokeWidth={.7} />
+                            <line x1={dimX} y1={hy1} x2={dimX} y2={hy2} stroke="#A32D2D" strokeWidth={.7} strokeDasharray="3,2" /><line x1={dimX - 4} y1={hy1} x2={dimX + 4} y2={hy1} stroke="#A32D2D" strokeWidth={.7} /><line x1={dimX - 4} y1={hy2} x2={dimX + 4} y2={hy2} stroke="#A32D2D" strokeWidth={.7} />
                             <text x={dimX} y={(hy1 + hy2) / 2 - 4} textAnchor="middle" fontSize={8} fill="#A32D2D" fontWeight="700" fontFamily="IBM Plex Mono" transform={`rotate(-90, ${dimX}, ${(hy1 + hy2) / 2})`}>{handlePitch}</text>
-                            {showLeftDim && (<><line x1={dx} y1={hy2 + 16} x2={hx1} y2={hy2 + 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={dx} y1={hy2 + 12} x2={dx} y2={hy2 + 20} stroke="#0C447C" strokeWidth={.7} /><line x1={hx1} y1={hy2 + 12} x2={hx1} y2={hy2 + 20} stroke="#0C447C" strokeWidth={.7} /><text x={(dx + hx1) / 2} y={hy2 + 12} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromLeft1}</text></>)}
-                            {showRightDim && (<><line x1={hx1} y1={hy2 + 16} x2={dx + dwa} y2={hy2 + 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={hx1} y1={hy2 + 12} x2={hx1} y2={hy2 + 20} stroke="#0C447C" strokeWidth={.7} /><line x1={dx + dwa} y1={hy2 + 12} x2={dx + dwa} y2={hy2 + 20} stroke="#0C447C" strokeWidth={.7} /><text x={(hx1 + dx + dwa) / 2} y={hy2 + 12} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromRight2}</text></>)}
+                            <line x1={dimX} y1={hy2} x2={dimX} y2={dy + dha} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={dimX - 4} y1={dy + dha} x2={dimX + 4} y2={dy + dha} stroke="#0C447C" strokeWidth={.7} />
+                            <text x={dimX} y={(hy2 + dy + dha) / 2 - 4} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono" transform={`rotate(-90, ${dimX}, ${(hy2 + dy + dha) / 2})`}>{dimFromBot2}</text>
+                            {showLeftDim && (<><line x1={dx} y1={hy1 - 16} x2={hx1} y2={hy1 - 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={dx} y1={hy1 - 12} x2={dx} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><line x1={hx1} y1={hy1 - 12} x2={hx1} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><text x={(dx + hx1) / 2} y={hy1 - 22} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromLeft1}</text></>)}
+                            {showRightDim && (<><line x1={hx1} y1={hy1 - 16} x2={dx + dwa} y2={hy1 - 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={hx1} y1={hy1 - 12} x2={hx1} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><line x1={dx + dwa} y1={hy1 - 12} x2={dx + dwa} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><text x={(hx1 + dx + dwa) / 2} y={hy1 - 22} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromRight2}</text></>)}
                           </>);
                         })()}
                         {handleOrient === "horizontal" && (() => {
-                          const yDimLine = hy1 - 16; const centerHandleX = (hx1 + hx2) / 2;
+                          const yDimLine = hy1 + 16; const centerHandleX = (hx1 + hx2) / 2;
                           return (<>
-                            <line x1={centerHandleX} y1={dy} x2={centerHandleX} y2={hy1} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={centerHandleX - 4} y1={dy} x2={centerHandleX + 4} y2={dy} stroke="#0C447C" strokeWidth={.7} /><line x1={centerHandleX - 4} y1={hy1} x2={centerHandleX + 4} y2={hy1} stroke="#0C447C" strokeWidth={.7} />
-                            <text x={centerHandleX} y={(dy + hy1) / 2 - 4} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono" transform={`rotate(-90, ${centerHandleX}, ${(dy + hy1) / 2})`}>{dimFromTop1}</text>
+                            <line x1={centerHandleX} y1={hy1} x2={centerHandleX} y2={dy + dha} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={centerHandleX - 4} y1={dy + dha} x2={centerHandleX + 4} y2={dy + dha} stroke="#0C447C" strokeWidth={.7} /><line x1={centerHandleX - 4} y1={hy1} x2={centerHandleX + 4} y2={hy1} stroke="#0C447C" strokeWidth={.7} />
+                            <text x={centerHandleX} y={(hy1 + dy + dha) / 2 - 4} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono" transform={`rotate(-90, ${centerHandleX}, ${(hy1 + dy + dha) / 2})`}>{dimFromBot1}</text>
                             <line x1={hx1} y1={yDimLine} x2={hx2} y2={yDimLine} stroke="#A32D2D" strokeWidth={.7} strokeDasharray="3,2" /><line x1={hx1} y1={yDimLine - 4} x2={hx1} y2={yDimLine + 4} stroke="#A32D2D" strokeWidth={.7} /><line x1={hx2} y1={yDimLine - 4} x2={hx2} y2={yDimLine + 4} stroke="#A32D2D" strokeWidth={.7} />
-                            <text x={(hx1 + hx2) / 2} y={yDimLine - 4} textAnchor="middle" fontSize={8} fill="#A32D2D" fontWeight="700" fontFamily="IBM Plex Mono">{handlePitch}</text>
-                            {showLeftDim && (<><line x1={dx} y1={hy1 + 16} x2={hx1} y2={hy1 + 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={dx} y1={hy1 + 12} x2={dx} y2={hy1 + 20} stroke="#0C447C" strokeWidth={.7} /><line x1={hx1} y1={hy1 + 12} x2={hx1} y2={hy1 + 20} stroke="#0C447C" strokeWidth={.7} /><text x={(dx + hx1) / 2} y={hy1 + 12} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromLeft1}</text></>)}
-                            {showRightDim && (<><line x1={hx2} y1={hy1 + 16} x2={dx + dwa} y2={hy1 + 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={hx2} y1={hy1 + 12} x2={hx2} y2={hy1 + 20} stroke="#0C447C" strokeWidth={.7} /><line x1={dx + dwa} y1={hy1 + 12} x2={dx + dwa} y2={hy1 + 20} stroke="#0C447C" strokeWidth={.7} /><text x={(hx2 + dx + dwa) / 2} y={hy1 + 12} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromRight2}</text></>)}
-                            {showCenterDimsH && (<><line x1={dx} y1={hy1 + 16} x2={hx1} y2={hy1 + 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={dx} y1={hy1 + 12} x2={dx} y2={hy1 + 20} stroke="#0C447C" strokeWidth={.7} /><line x1={hx1} y1={hy1 + 12} x2={hx1} y2={hy1 + 20} stroke="#0C447C" strokeWidth={.7} /><text x={(dx + hx1) / 2} y={hy1 + 12} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromLeft1}</text><line x1={hx2} y1={hy1 + 16} x2={dx + dwa} y2={hy1 + 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={hx2} y1={hy1 + 12} x2={hx2} y2={hy1 + 20} stroke="#0C447C" strokeWidth={.7} /><line x1={dx + dwa} y1={hy1 + 12} x2={dx + dwa} y2={hy1 + 20} stroke="#0C447C" strokeWidth={.7} /><text x={(hx2 + dx + dwa) / 2} y={hy1 + 12} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromRight2}</text></>)}
+                            <text x={(hx1 + hx2) / 2} y={yDimLine + 12} textAnchor="middle" fontSize={8} fill="#A32D2D" fontWeight="700" fontFamily="IBM Plex Mono">{handlePitch}</text>
+                            {showLeftDim && (<><line x1={dx} y1={hy1 - 16} x2={hx1} y2={hy1 - 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={dx} y1={hy1 - 12} x2={dx} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><line x1={hx1} y1={hy1 - 12} x2={hx1} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><text x={(dx + hx1) / 2} y={hy1 - 22} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromLeft1}</text></>)}
+                            {showRightDim && (<><line x1={hx2} y1={hy1 - 16} x2={dx + dwa} y2={hy1 - 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={hx2} y1={hy1 - 12} x2={hx2} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><line x1={dx + dwa} y1={hy1 - 12} x2={dx + dwa} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><text x={(hx2 + dx + dwa) / 2} y={hy1 - 22} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromRight2}</text></>)}
+                            {showCenterDimsH && (<><line x1={dx} y1={hy1 - 16} x2={hx1} y2={hy1 - 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={dx} y1={hy1 - 12} x2={dx} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><line x1={hx1} y1={hy1 - 12} x2={hx1} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><text x={(dx + hx1) / 2} y={hy1 - 22} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromLeft1}</text><line x1={hx2} y1={hy1 - 16} x2={dx + dwa} y2={hy1 - 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={hx2} y1={hy1 - 12} x2={hx2} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><line x1={dx + dwa} y1={hy1 - 12} x2={dx + dwa} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><text x={(hx2 + dx + dwa) / 2} y={hy1 - 22} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromRight2}</text></>)}
                           </>);
                         })()}
                         {hingeYs.map((hy, idx) => (
@@ -3120,10 +3689,9 @@
                   <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <span>Szekrény magassága</span>
-                      {customH !== null && (<button onClick={() => setCustomH(null)} style={{ fontSize: 9, padding: "1px 6px", borderRadius: 5, cursor: "pointer", background: "var(--color-neutral-100)", border: "1px solid var(--color-border)", color: "var(--color-text-secondary)", fontWeight: 700 }}>{"↩"} Auto ({autoTotalCabinetH} mm)</button>)}
+                      {customH !== null && (<button onClick={() => setCustomH(null)} style={{ fontSize: 9, padding: "1px 6px", borderRadius: 5, cursor: "pointer", background: "var(--color-neutral-100)", border: "1px solid var(--color-border)", color: "var(--color-text-secondary)", fontWeight: 700 }}>{"↩"} Alap ({autoTotalCabinetH} mm)</button>)}
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={customH !== null ? customH : autoTotalCabinetH} min={100} onChange={e => setCustomH(e.target.value === "" ? "" : +e.target.value)} style={{ ...inputStyle, fontSize: 14, borderColor: customH !== null ? AMB : "#ddd" }} /><span style={{ fontSize: 11, color: "#888", fontWeight: 600 }}>mm</span></div>
-                    {customH === null && <span style={{ fontSize: 9, color: "#aaa" }}>Számított: {autoTotalCabinetH} mm (módosítható)</span>}
                   </label>
                   {[{ label: "Hátlap vastagság", val: backT, set: setBackT, min: 1, unit: "mm" }, { label: "Polcok száma", val: shelfCount, set: setShelfCount, min: 0, unit: "db" }, { label: "Polc behúzás", val: shelfSetback, set: setShelfSetback, min: 0, unit: "mm" }].map(f => (
                     <label key={f.label} style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>{f.label}<div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={f.val} min={f.min} onChange={e => f.set(e.target.value === "" ? "" : +e.target.value)} style={{ ...inputStyle, fontSize: 14 }} /><span style={{ fontSize: 11, color: "#888", fontWeight: 600 }}>{f.unit}</span></div></label>
@@ -3212,7 +3780,7 @@
                   <DoorHandingSelector handing={doorHanding} onChange={setDoorHanding} />
                   <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>Furattávolság<div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={handlePitch} onChange={e => setHandlePitch(+e.target.value)} style={{ ...inputStyle, flex: 1 }} /><span style={{ fontSize: 10, color: "#888" }}>mm</span></div></label>
                   <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>Kezdő furat táv. oldalról<div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={handleMarginX} disabled={handleCenter && handleOrient === "horizontal"} onChange={e => setHandleMarginX(+e.target.value)} style={{ ...inputStyle, flex: 1, opacity: handleCenter && handleOrient === "horizontal" ? .5 : 1 }} /><span style={{ fontSize: 10, color: "#888" }}>mm</span></div></label>
-                  <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>Kezdő furat táv. fentről<div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={handleMarginY} onChange={e => setHandleMarginY(+e.target.value)} style={{ ...inputStyle, flex: 1 }} /><span style={{ fontSize: 10, color: "#888" }}>mm</span></div></label>
+                  <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>Kezdő furat táv. alulról<div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={handleMarginY} onChange={e => setHandleMarginY(+e.target.value)} style={{ ...inputStyle, flex: 1 }} /><span style={{ fontSize: 10, color: "#888" }}>mm</span></div></label>
                   <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: "var(--text-secondary)", fontWeight: 600 }}>Pánthely távolsága széltől<div style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="number" value={hingeMargin} onChange={e => setHingeMargin(+e.target.value)} style={{ ...inputStyle, flex: 1 }} /><span style={{ fontSize: 10, color: "#888" }}>mm</span></div></label>
                 </div>
                 <div style={{ background: "#eef4ff", borderRadius: 8, padding: 12, border: "1px solid #c0d8f0" }}>
@@ -3271,19 +3839,19 @@
                   const dwa = doorW * dsc; const dha = doorH * dsc;
                   const dx = 60 + (SVW - 120 - dwa) / 2; const dy = 50 + (dSVH - 100 - dha) / 2;
                   let hx1 = 0, hy1 = 0, hx2 = 0, hy2 = 0;
-                  let dimFromTop1 = 0, dimFromLeft1 = 0, dimFromRight2 = 0;
+                  let dimFromBot1 = 0, dimFromBot2 = 0, dimFromLeft1 = 0, dimFromRight2 = 0;
                   let showLeftDim = false, showRightDim = false, showCenterDimsH = false;
                   const hingesLeft = doorHanding === "left";
                   const hingeX = hingesLeft ? dx + 22.5 * dsc : dx + dwa - 22.5 * dsc;
                   if (handleOrient === "horizontal") {
-                    hy1 = dy + handleMarginY * dsc; hy2 = hy1; dimFromTop1 = handleMarginY;
+                    hy1 = dy + dha - handleMarginY * dsc; hy2 = hy1; dimFromBot1 = handleMarginY;
                     if (!handleCenter) { if (doorHanding === "right") { hx1 = dx + handleMarginX * dsc; hx2 = hx1 + handlePitch * dsc; dimFromLeft1 = handleMarginX; showLeftDim = true; } else { hx2 = dx + dwa - handleMarginX * dsc; hx1 = hx2 - handlePitch * dsc; dimFromRight2 = handleMarginX; showRightDim = true; } }
                     else { hx1 = dx + dwa / 2 - (handlePitch * dsc) / 2; hx2 = dx + dwa / 2 + (handlePitch * dsc) / 2; dimFromLeft1 = Math.round((doorW - handlePitch) / 2); dimFromRight2 = dimFromLeft1; showCenterDimsH = true; }
                   } else {
                     if (doorHanding === "right") { hx1 = dx + handleMarginX * dsc; dimFromLeft1 = handleMarginX; showLeftDim = true; } else { hx1 = dx + dwa - handleMarginX * dsc; dimFromRight2 = handleMarginX; showRightDim = true; }
                     hx2 = hx1;
-                    if (!handleCenter) { hy1 = dy + handleMarginY * dsc; hy2 = hy1 + handlePitch * dsc; } else { hy1 = dy + dha / 2 - (handlePitch * dsc) / 2; hy2 = dy + dha / 2 + (handlePitch * dsc) / 2; dimFromTop1 = Math.round((doorH - handlePitch) / 2); }
-                    if (!handleCenter) dimFromTop1 = handleMarginY;
+                    if (!handleCenter) { hy2 = dy + dha - handleMarginY * dsc; hy1 = hy2 - handlePitch * dsc; dimFromBot2 = handleMarginY; dimFromBot1 = handleMarginY + handlePitch; }
+                    else { hy1 = dy + dha / 2 - (handlePitch * dsc) / 2; hy2 = dy + dha / 2 + (handlePitch * dsc) / 2; dimFromBot2 = Math.round((doorH - handlePitch) / 2); dimFromBot1 = dimFromBot2 + handlePitch; }
                   }
                   const hingeYs = [];
                   if (hingeCount >= 2) { hingeYs.push(dy + hingeMargin * dsc); hingeYs.push(dy + dha - hingeMargin * dsc); const space = (doorH - 2 * hingeMargin) / (hingeCount - 1); for (let i = 1; i < hingeCount - 1; i++) hingeYs.push(dy + (hingeMargin + i * space) * dsc); }
@@ -3302,24 +3870,24 @@
                         {handleOrient === "vertical" && (() => {
                           const isRightSide = hx1 > dx + dwa / 2; const dir = isRightSide ? -1 : 1; const dimX = hx1 + dir * 16;
                           return (<>
-                            <line x1={dimX} y1={dy} x2={dimX} y2={hy1} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={dimX - 4} y1={dy} x2={dimX + 4} y2={dy} stroke="#0C447C" strokeWidth={.7} /><line x1={dimX - 4} y1={hy1} x2={dimX + 4} y2={hy1} stroke="#0C447C" strokeWidth={.7} />
-                            <text x={dimX} y={(dy + hy1) / 2 - 4} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono" transform={`rotate(-90, ${dimX}, ${(dy + hy1) / 2})`}>{dimFromTop1}</text>
-                            <line x1={dimX} y1={hy1} x2={dimX} y2={hy2} stroke="#A32D2D" strokeWidth={.7} strokeDasharray="3,2" /><line x1={dimX - 4} y1={hy2} x2={dimX + 4} y2={hy2} stroke="#A32D2D" strokeWidth={.7} />
+                            <line x1={dimX} y1={hy1} x2={dimX} y2={hy2} stroke="#A32D2D" strokeWidth={.7} strokeDasharray="3,2" /><line x1={dimX - 4} y1={hy1} x2={dimX + 4} y2={hy1} stroke="#A32D2D" strokeWidth={.7} /><line x1={dimX - 4} y1={hy2} x2={dimX + 4} y2={hy2} stroke="#A32D2D" strokeWidth={.7} />
                             <text x={dimX} y={(hy1 + hy2) / 2 - 4} textAnchor="middle" fontSize={8} fill="#A32D2D" fontWeight="700" fontFamily="IBM Plex Mono" transform={`rotate(-90, ${dimX}, ${(hy1 + hy2) / 2})`}>{handlePitch}</text>
-                            {showLeftDim && (<><line x1={dx} y1={hy2 + 16} x2={hx1} y2={hy2 + 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={dx} y1={hy2 + 12} x2={dx} y2={hy2 + 20} stroke="#0C447C" strokeWidth={.7} /><line x1={hx1} y1={hy2 + 12} x2={hx1} y2={hy2 + 20} stroke="#0C447C" strokeWidth={.7} /><text x={(dx + hx1) / 2} y={hy2 + 12} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromLeft1}</text></>)}
-                            {showRightDim && (<><line x1={hx1} y1={hy2 + 16} x2={dx + dwa} y2={hy2 + 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={hx1} y1={hy2 + 12} x2={hx1} y2={hy2 + 20} stroke="#0C447C" strokeWidth={.7} /><line x1={dx + dwa} y1={hy2 + 12} x2={dx + dwa} y2={hy2 + 20} stroke="#0C447C" strokeWidth={.7} /><text x={(hx1 + dx + dwa) / 2} y={hy2 + 12} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromRight2}</text></>)}
+                            <line x1={dimX} y1={hy2} x2={dimX} y2={dy + dha} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={dimX - 4} y1={dy + dha} x2={dimX + 4} y2={dy + dha} stroke="#0C447C" strokeWidth={.7} />
+                            <text x={dimX} y={(hy2 + dy + dha) / 2 - 4} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono" transform={`rotate(-90, ${dimX}, ${(hy2 + dy + dha) / 2})`}>{dimFromBot2}</text>
+                            {showLeftDim && (<><line x1={dx} y1={hy1 - 16} x2={hx1} y2={hy1 - 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={dx} y1={hy1 - 12} x2={dx} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><line x1={hx1} y1={hy1 - 12} x2={hx1} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><text x={(dx + hx1) / 2} y={hy1 - 22} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromLeft1}</text></>)}
+                            {showRightDim && (<><line x1={hx1} y1={hy1 - 16} x2={dx + dwa} y2={hy1 - 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={hx1} y1={hy1 - 12} x2={hx1} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><line x1={dx + dwa} y1={hy1 - 12} x2={dx + dwa} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><text x={(hx1 + dx + dwa) / 2} y={hy1 - 22} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromRight2}</text></>)}
                           </>);
                         })()}
                         {handleOrient === "horizontal" && (() => {
-                          const yDimLine = hy1 - 16; const centerHandleX = (hx1 + hx2) / 2;
+                          const yDimLine = hy1 + 16; const centerHandleX = (hx1 + hx2) / 2;
                           return (<>
-                            <line x1={centerHandleX} y1={dy} x2={centerHandleX} y2={hy1} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={centerHandleX - 4} y1={dy} x2={centerHandleX + 4} y2={dy} stroke="#0C447C" strokeWidth={.7} /><line x1={centerHandleX - 4} y1={hy1} x2={centerHandleX + 4} y2={hy1} stroke="#0C447C" strokeWidth={.7} />
-                            <text x={centerHandleX} y={(dy + hy1) / 2 - 4} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono" transform={`rotate(-90, ${centerHandleX}, ${(dy + hy1) / 2})`}>{dimFromTop1}</text>
+                            <line x1={centerHandleX} y1={hy1} x2={centerHandleX} y2={dy + dha} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={centerHandleX - 4} y1={dy + dha} x2={centerHandleX + 4} y2={dy + dha} stroke="#0C447C" strokeWidth={.7} /><line x1={centerHandleX - 4} y1={hy1} x2={centerHandleX + 4} y2={hy1} stroke="#0C447C" strokeWidth={.7} />
+                            <text x={centerHandleX} y={(hy1 + dy + dha) / 2 - 4} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono" transform={`rotate(-90, ${centerHandleX}, ${(hy1 + dy + dha) / 2})`}>{dimFromBot1}</text>
                             <line x1={hx1} y1={yDimLine} x2={hx2} y2={yDimLine} stroke="#A32D2D" strokeWidth={.7} strokeDasharray="3,2" /><line x1={hx1} y1={yDimLine - 4} x2={hx1} y2={yDimLine + 4} stroke="#A32D2D" strokeWidth={.7} /><line x1={hx2} y1={yDimLine - 4} x2={hx2} y2={yDimLine + 4} stroke="#A32D2D" strokeWidth={.7} />
-                            <text x={(hx1 + hx2) / 2} y={yDimLine - 4} textAnchor="middle" fontSize={8} fill="#A32D2D" fontWeight="700" fontFamily="IBM Plex Mono">{handlePitch}</text>
-                            {showLeftDim && (<><line x1={dx} y1={hy1 + 16} x2={hx1} y2={hy1 + 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={dx} y1={hy1 + 12} x2={dx} y2={hy1 + 20} stroke="#0C447C" strokeWidth={.7} /><line x1={hx1} y1={hy1 + 12} x2={hx1} y2={hy1 + 20} stroke="#0C447C" strokeWidth={.7} /><text x={(dx + hx1) / 2} y={hy1 + 12} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromLeft1}</text></>)}
-                            {showRightDim && (<><line x1={hx2} y1={hy1 + 16} x2={dx + dwa} y2={hy1 + 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={hx2} y1={hy1 + 12} x2={hx2} y2={hy1 + 20} stroke="#0C447C" strokeWidth={.7} /><line x1={dx + dwa} y1={hy1 + 12} x2={dx + dwa} y2={hy1 + 20} stroke="#0C447C" strokeWidth={.7} /><text x={(hx2 + dx + dwa) / 2} y={hy1 + 12} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromRight2}</text></>)}
-                            {showCenterDimsH && (<><line x1={dx} y1={hy1 + 16} x2={hx1} y2={hy1 + 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={dx} y1={hy1 + 12} x2={dx} y2={hy1 + 20} stroke="#0C447C" strokeWidth={.7} /><line x1={hx1} y1={hy1 + 12} x2={hx1} y2={hy1 + 20} stroke="#0C447C" strokeWidth={.7} /><text x={(dx + hx1) / 2} y={hy1 + 12} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromLeft1}</text><line x1={hx2} y1={hy1 + 16} x2={dx + dwa} y2={hy1 + 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={hx2} y1={hy1 + 12} x2={hx2} y2={hy1 + 20} stroke="#0C447C" strokeWidth={.7} /><line x1={dx + dwa} y1={hy1 + 12} x2={dx + dwa} y2={hy1 + 20} stroke="#0C447C" strokeWidth={.7} /><text x={(hx2 + dx + dwa) / 2} y={hy1 + 12} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromRight2}</text></>)}
+                            <text x={(hx1 + hx2) / 2} y={yDimLine + 12} textAnchor="middle" fontSize={8} fill="#A32D2D" fontWeight="700" fontFamily="IBM Plex Mono">{handlePitch}</text>
+                            {showLeftDim && (<><line x1={dx} y1={hy1 - 16} x2={hx1} y2={hy1 - 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={dx} y1={hy1 - 12} x2={dx} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><line x1={hx1} y1={hy1 - 12} x2={hx1} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><text x={(dx + hx1) / 2} y={hy1 - 22} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromLeft1}</text></>)}
+                            {showRightDim && (<><line x1={hx2} y1={hy1 - 16} x2={dx + dwa} y2={hy1 - 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={hx2} y1={hy1 - 12} x2={hx2} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><line x1={dx + dwa} y1={hy1 - 12} x2={dx + dwa} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><text x={(hx2 + dx + dwa) / 2} y={hy1 - 22} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromRight2}</text></>)}
+                            {showCenterDimsH && (<><line x1={dx} y1={hy1 - 16} x2={hx1} y2={hy1 - 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={dx} y1={hy1 - 12} x2={dx} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><line x1={hx1} y1={hy1 - 12} x2={hx1} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><text x={(dx + hx1) / 2} y={hy1 - 22} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromLeft1}</text><line x1={hx2} y1={hy1 - 16} x2={dx + dwa} y2={hy1 - 16} stroke="#0C447C" strokeWidth={.7} strokeDasharray="3,2" /><line x1={hx2} y1={hy1 - 12} x2={hx2} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><line x1={dx + dwa} y1={hy1 - 12} x2={dx + dwa} y2={hy1 - 20} stroke="#0C447C" strokeWidth={.7} /><text x={(hx2 + dx + dwa) / 2} y={hy1 - 22} textAnchor="middle" fontSize={8} fill="#0C447C" fontWeight="700" fontFamily="IBM Plex Mono">{dimFromRight2}</text></>)}
                           </>);
                         })()}
                         {hingeYs.map((hy, idx) => (
@@ -3447,7 +4015,8 @@
         { id: "lower2", icon: "🚪🚪", title: "2 ajtós alsó szekrény", desc: "Kétajtós alsószekrény", category: "alsó", ready: true },
         { id: "upper2", icon: "🚪🚪", title: "2 ajtós felső szekrény", desc: "Kétajtós felsőszekrény", category: "felső", ready: true },
         { id: "drawer", icon: "🗄️", title: "Fiókos szekrény", desc: "Fiókos alsószekrény", category: "alsó", ready: false },
-        { id: "sink", icon: "🚰", title: "Mosogatós szekrény", desc: "Mosogató alatti szekrény", category: "alsó", ready: false },
+        { id: "sink1", icon: "🚰", title: "1 ajtós mosogatós szekrény", desc: "Mosogató alatti, 1 ajtós, hátlap nélkül", category: "alsó", ready: true },
+        { id: "sink2", icon: "🚰🚪", title: "2 ajtós mosogatós szekrény", desc: "Mosogató alatti, 2 ajtós, hátlap nélkül", category: "alsó", ready: true },
         { id: "oven", icon: "♨️", title: "Sütős szekrény", desc: "Beépített sütőhöz", category: "magas", ready: false },
         { id: "hood", icon: "🌀", title: "Elszívó szekrény", desc: "Páraelszívó szekrény", category: "felső", ready: false },
         { id: "tall", icon: "📐", title: "Magas szekrény", desc: "Padlótól a felsőig érő", category: "magas", ready: false },
@@ -3467,6 +4036,12 @@
       }
       if (selectedCabinet === "upper2") {
         return <Upper2DoorCalc params={params} boardColors={boardColors} edgeBandOptions={edgeBandOptions} partDefaults={partDefaults} onBack={() => setSelectedCabinet(null)} />;
+      }
+      if (selectedCabinet === "sink1") {
+        return <Sink1DoorCalc params={params} boardColors={boardColors} edgeBandOptions={edgeBandOptions} partDefaults={partDefaults} onBack={() => setSelectedCabinet(null)} />;
+      }
+      if (selectedCabinet === "sink2") {
+        return <Sink2DoorCalc params={params} boardColors={boardColors} edgeBandOptions={edgeBandOptions} partDefaults={partDefaults} onBack={() => setSelectedCabinet(null)} />;
       }
 
       // Áthelyezett funkciók az edge módosításhoz
